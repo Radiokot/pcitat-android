@@ -14,8 +14,8 @@ class User(
         val name: String? = null,
         @SerializedName("twitter")
         val twitterIntegration: TwitterIntegration? = null,
-        @SerializedName("session")
-        val sessionKey: String? = null
+        @SerializedName("key")
+        val authKey: String? = null
 ) {
     class TwitterIntegration(
             @SerializedName("username")
