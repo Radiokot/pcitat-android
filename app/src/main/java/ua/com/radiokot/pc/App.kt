@@ -12,6 +12,12 @@ import io.fabric.sdk.android.Fabric
  * Created by Oleg Koretsky on 2/19/18.
  */
 class App : Application() {
+    companion object {
+        private lateinit var mInstance: App
+
+        val instance: App
+            get() = mInstance
+    }
     val areGooglePlayServicesAvailable: Boolean
         get() {
             val googleApiAvailability = GoogleApiAvailability.getInstance()
@@ -21,6 +27,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        mInstance = this
 
         if (areGooglePlayServicesAvailable) {
             try {

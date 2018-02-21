@@ -1,5 +1,8 @@
 package ua.com.radiokot.pc.logic.api
 
+import com.franmontiel.persistentcookiejar.PersistentCookieJar
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.reactivex.schedulers.Schedulers
@@ -9,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.exceptions.BadRequestException
 import ua.com.radiokot.pc.logic.exceptions.ConflictException
 import ua.com.radiokot.pc.logic.exceptions.NotAuthorizedException
@@ -23,54 +27,32 @@ import javax.net.ssl.SSLContext
  */
 object ApiFactory {
     private val API_URL = "https://pc.radiokot.com.ua/api/"
-    private val SESSION_HEADER = "X-Session"
     private val REQUEST_TIMEOUT = 20 * 1000
 
-    private val userServices = mutableMapOf<String?, UserService>()
-    private val booksServices = mutableMapOf<String?, BooksService>()
-    private val quotesServices = mutableMapOf<String?, QuotesService>()
+    private var userService: UserService? = null
+    private var booksService: BooksService? = null
+    private var quotesService: QuotesService? = null
 
     // region Service creation
-    fun getUserService(session: String? = null): UserService {
-        return userServices[session].let {
-            if (it == null) {
-                val userService = createBaseRetrofitConfig(getBaseHttpClient(session))
-                        .build()
-                        .create(UserService::class.java)
-                userServices.put(session, userService)
-                userService
-            } else {
-                it
-            }
-        }
+    fun getUserService(): UserService {
+        return userService ?: createBaseRetrofitConfig(getBaseHttpClient())
+                .build()
+                .create(UserService::class.java)
+                .also { userService = it }
     }
 
-    fun getBooksService(session: String? = null): BooksService {
-        return booksServices[session].let {
-            if (it == null) {
-                val booksService = createBaseRetrofitConfig(getBaseHttpClient(session))
-                        .build()
-                        .create(BooksService::class.java)
-                booksServices.put(session, booksService)
-                booksService
-            } else {
-                it
-            }
-        }
+    fun getBooksService(): BooksService {
+        return booksService ?: createBaseRetrofitConfig(getBaseHttpClient())
+                .build()
+                .create(BooksService::class.java)
+                .also { booksService = it }
     }
 
-    fun getQuotesService(session: String? = null): QuotesService {
-        return quotesServices[session].let {
-            if (it == null) {
-                val quotesService = createBaseRetrofitConfig(getBaseHttpClient(session))
-                        .build()
-                        .create(QuotesService::class.java)
-                quotesServices.put(session, quotesService)
-                quotesService
-            } else {
-                it
-            }
-        }
+    fun getQuotesService(): QuotesService {
+        return quotesService ?: createBaseRetrofitConfig(getBaseHttpClient())
+                .build()
+                .create(QuotesService::class.java)
+                .also { quotesService = it }
     }
     // endregion
 
@@ -98,16 +80,6 @@ object ApiFactory {
         return loggingInterceptor
     }
 
-    private fun createSessionHeaderInterceptor(session: String): Interceptor {
-        return Interceptor { chain ->
-            chain.proceed(
-                    chain.request().newBuilder()
-                            .addHeader(SESSION_HEADER, session)
-                            .build()
-            )
-        }
-    }
-
     private fun createHttpCodesWrappingInterceptor(): Interceptor {
         return Interceptor { chain ->
             val response = chain.proceed(chain.request())
@@ -124,7 +96,7 @@ object ApiFactory {
     }
     // endregion
 
-    fun getBaseHttpClient(session: String? = null): OkHttpClient {
+    fun getBaseHttpClient(): OkHttpClient {
         val sslContext = SSLContext.getInstance("TLSv1.2")
         sslContext.init(null, null, null)
         val sslFactory = sslContext.socketFactory
@@ -144,13 +116,11 @@ object ApiFactory {
 
         clientBuilder.connectionSpecs(Arrays.asList(connectionSpec, ConnectionSpec.CLEARTEXT))
 
-        if (session != null) {
-            clientBuilder.addInterceptor(createSessionHeaderInterceptor(session))
-        }
-
         clientBuilder
                 .addInterceptor(createLoggingInterceptor())
                 .addInterceptor(createHttpCodesWrappingInterceptor())
+
+        clientBuilder.cookieJar(getBaseCookieJar())
 
         val simulateLongResponses = false
         if (simulateLongResponses) {
@@ -167,6 +137,10 @@ object ApiFactory {
         val builder = GsonBuilder()
                 .serializeNulls()
         return builder.create()
+    }
+
+    fun getBaseCookieJar(): PersistentCookieJar {
+        return PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(App.instance))
     }
     // endregion
 }
