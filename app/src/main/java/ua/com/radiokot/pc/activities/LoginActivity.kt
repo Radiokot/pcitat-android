@@ -54,8 +54,6 @@ class LoginActivity : BaseActivity() {
 
     // region Init
     private fun initFields() {
-        EditTextUtil.initEmailEditText(email_edit_text)
-
         object : SimpleTextWatcher() {
             override fun afterTextChanged(p0: Editable?) {
                 password_edit_text.error = null
