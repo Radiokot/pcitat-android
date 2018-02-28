@@ -1,10 +1,11 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
@@ -12,4 +13,29 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="InputField">
+        <item name="met_floatingLabel">normal</item>
+        <item name="met_primaryColor">@color/accent</item>
+    </style>
+
+    <style name="Heading">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_heading</item>
+        <item name="android:textColor">@color/md_black_1000</item>
+    </style>
+
+    <style name="PrimaryButton.Overlay" parent="ThemeOverlay.AppCompat">
+        <item name="colorButtonNormal">@color/primaryActionDisabled</item>
+        <item name="colorAccent">@color/primaryAction</item>
+    </style>
+
+    <style name="PrimaryButton" parent="Base.Widget.AppCompat.Button.Colored">
+        <item name="android:theme">@style/PrimaryButton.Overlay</item>
+        <item name="android:textColor">@color/md_white_1000</item>
+    </style>
+
+    <style name="SecondaryButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/secondaryAction</item>
+    </style>
 </resources>

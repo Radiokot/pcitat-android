@@ -3,6 +3,7 @@ package ua.com.radiokot.pc.logic
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import okhttp3.HttpUrl
+import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.model.LoginData
 import ua.com.radiokot.pc.logic.model.User
@@ -40,6 +41,7 @@ object AuthManager {
 
     fun logOut() {
         ApiFactory.getBaseCookieJar().clear()
+        App.clearState()
         updateSubject()
     }
 }

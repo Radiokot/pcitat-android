@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">Просто Цитатник</string>
+    <string name="app_name">Просто цитатник</string>
+    <string name="credentials_email">Email</string>
+    <string name="credentials_password">Пароль</string>
+    <string name="login">Вход</string>
+    <string name="signup">Регистрация</string>
+    <string name="error_cannot_be_empty">Не может быть пустым</string>
+    <string name="error_invalid_email">Неверный email</string>
+    <string name="error_invalid_pass">Неверный пароль</string>
+    <string name="error_weak_pass">Слабый пароль</string>
+    <string name="error_not_found_try_again">Не найдено. Попробуйте еще раз</string>
+    <string name="error_no_connection_try_again">Нет соединения. Попробуйте еще раз</string>
+    <string name="error_occured_try_again">Возникла ошибка. Попробуйте еще раз</string>
 </resources>

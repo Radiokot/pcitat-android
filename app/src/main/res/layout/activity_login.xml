@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ua.com.radiokot.pc.activities.LoginActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/standard_margin">
+
+            <ImageView
+                android:layout_width="@dimen/login_signup_logo_size"
+                android:layout_height="@dimen/login_signup_logo_size"
+                android:contentDescription="@string/app_name"
+                app:srcCompat="@drawable/logo" />
+
+            <TextView
+                style="@style/Heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/double_standard_margin"
+                android:gravity="center"
+                android:text="@string/app_name" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/email_edit_text"
+                style="@style/InputField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/credentials_email"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/password_edit_text"
+                style="@style/InputField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/standard_padding"
+                android:hint="@string/credentials_password"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/standard_margin" />
+
+            <include
+                layout="@layout/layout_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/standard_margin">
+
+                <Button
+                    android:id="@+id/login_button"
+                    style="@style/PrimaryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:paddingEnd="@dimen/double_standard_margin"
+                    android:paddingStart="@dimen/double_standard_margin"
+                    android:text="@string/login"
+                    android:theme="@style/PrimaryButton.Overlay" />
+
+                <Button
+                    android:id="@+id/go_to_signup_button"
+                    style="@style/SecondaryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/standard_margin"
+                    android:layout_toStartOf="@id/login_button"
+                    android:text="@string/signup" />
+
+            </RelativeLayout>
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/login_signup_logo_size" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
