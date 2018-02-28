@@ -1,7 +1,6 @@
 package ua.com.radiokot.pc.activities
 
 import android.os.Bundle
-import android.util.Log
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import kotlinx.android.synthetic.main.activity_books.*
@@ -21,7 +20,6 @@ class BooksActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         if (!AuthManager.isAuthorized()) {
-            Log.i("Oleg", "It was here1!!")
             Navigator.toLoginActivity(this)
             return
         }
