@@ -8,6 +8,8 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.security.ProviderInstaller
+import com.jakewharton.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
 import io.fabric.sdk.android.Fabric
 import ua.com.radiokot.pc.logic.AppState
 import ua.com.radiokot.pc.logic.AuthManager
@@ -51,6 +53,8 @@ class App : Application() {
         initTlsIfNeeded()
         initCrashlytics()
         initLifecycleCallbacks()
+        initPicasso()
+
         subscribeToAuthStatus()
     }
 
@@ -106,6 +110,13 @@ class App : Application() {
                         }
                     }
                 }
+    }
+
+    private fun initPicasso() {
+        val picasso = Picasso.Builder(this)
+                .downloader(OkHttp3Downloader(externalCacheDir ?: cacheDir))
+                .build()
+        Picasso.setSingletonInstance(picasso)
     }
     // endregion
 }

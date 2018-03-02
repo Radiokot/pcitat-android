@@ -27,7 +27,7 @@ object DefaultErrorHandler {
             is NotFoundException ->
                 App.instance.getString(R.string.error_not_found_try_again)
             is IOException ->
-                App.instance.getString(R.string.error_no_connection_try_again)
+                App.instance.getString(R.string.error_io_try_again)
             else -> {
                 App.instance.getString(R.string.error_occured_try_again)
             }

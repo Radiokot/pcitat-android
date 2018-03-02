@@ -17,4 +17,16 @@ object Repositories {
             }
         }
     }
+
+    fun books(): BooksRepository {
+        return App.state.booksRepository.let {
+            if (it != null) {
+                it
+            } else {
+                val new = BooksRepository()
+                App.state.booksRepository = new
+                new
+            }
+        }
+    }
 }

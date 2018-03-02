@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/BookCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/quarter_standard_margin"
+    android:layout_marginTop="@dimen/quarter_standard_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/book_cover_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/book_title_text_view"
+            style="@style/Heading.Book"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_standard_margin"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="Some book" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_standard_margin"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/twitter_export_icon"
+                style="@style/TwitterExportIndicator"
+                android:scaleType="centerInside"
+                android:layout_marginEnd="@dimen/half_standard_margin"
+                android:contentDescription="@string/book_used_for_twitter" />
+
+            <TextView
+                android:id="@+id/quotes_count_text_view"
+                style="@style/QuotesCountIndicator"
+                android:layout_width="wrap_content"
+                tools:text="4" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

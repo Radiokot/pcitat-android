@@ -15,5 +15,7 @@ class Book(
         @SerializedName("cover")
         val coverUrl: String? = null,
         @SerializedName("quotesCount")
-        val quotesCount: Int? = null
-)
+        val quotesCount: Int? = null,
+        @SerializedName("twitterBook")
+        val isTwitterBook: Boolean? = null
+    )

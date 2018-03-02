@@ -4,7 +4,7 @@ import android.app.Activity
 import android.support.v4.app.ActivityCompat
 import org.jetbrains.anko.intentFor
 import ua.com.radiokot.pc.R
-import ua.com.radiokot.pc.activities.BooksActivity
+import ua.com.radiokot.pc.activities.books.BooksActivity
 import ua.com.radiokot.pc.activities.LoginActivity
 
 object Navigator {

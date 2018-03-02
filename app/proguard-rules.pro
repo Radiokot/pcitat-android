@@ -24,13 +24,6 @@
 -dontwarn javax.lang.**
 -dontwarn javax.annotation.**
 -keep class org.codehaus.** { *; }
-# Glide
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public class * extends com.bumptech.glide.module.AppGlideModule
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
-  **[] $VALUES;
-  public *;
-}
 
 # Retrofit
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
@@ -48,10 +41,16 @@
 -keep class javax.inject.** { *; }
 -keep class retrofit2.** { *; }
 -dontwarn okio.**
--dontwarn com.squareup.okhttp3.**
--keep class com.squareup.okhttp3.** { *; }
--keep interface com.squareup.okhttp3.** { *; }
+-dontwarn com.squareup.**
+-keep class com.squareup.** { *; }
+-keep interface com.squareup.** { *; }
 
 # Trello RX
 -keep class com.trello.rxlifecycle2.** { *; }
 
+# Support lib
+-keep class android.support.v4.app.** { *; }
+-keep interface android.support.v4.app.** { *; }
+-keep class android.support.v7.app.** { *; }
+-keep interface android.support.v7.app.** { *; }
+-keep class android.support.v7.widget.** { *; }

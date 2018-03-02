@@ -9,6 +9,12 @@
     <string name="error_invalid_pass">Неверный пароль</string>
     <string name="error_weak_pass">Слабый пароль</string>
     <string name="error_not_found_try_again">Не найдено. Попробуйте еще раз</string>
-    <string name="error_no_connection_try_again">Нет соединения. Попробуйте еще раз</string>
+    <string name="error_io_try_again">Не удалось загрузить данные. Попробуйте еще раз</string>
     <string name="error_occured_try_again">Возникла ошибка. Попробуйте еще раз</string>
+    <string name="my_books">Мои книги</string>
+    <string name="retry_action">Повторить</string>
+    <string name="books_empty">Здесь будут ваши книги</string>
+    <string name="not_found">Ничего не найдено</string>
+    <string name="search">Поиск</string>
+    <string name="book_used_for_twitter">Используется для экспорта из Twitter</string>
 </resources>

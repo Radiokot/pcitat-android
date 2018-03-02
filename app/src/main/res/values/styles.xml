@@ -36,6 +36,37 @@
     </style>
 
     <style name="SecondaryButton" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/secondaryAction</item>
+        <item name="android:textColor">@color/md_light_secondary</item>
+    </style>
+
+    <style name="Heading.Book" parent="Heading">
+        <item name="android:textSize">@dimen/text_size_book_heading</item>
+    </style>
+
+    <style name="BookCard">
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="contentPadding">@dimen/half_standard_margin</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="BookIndicator">
+        <item name="android:textColor">@color/md_white_1000</item>
+        <item name="android:layout_height">22sp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="QuotesCountIndicator" parent="BookIndicator">
+        <item name="android:background">@drawable/quotes_count_indicator_background</item>
+        <item name="android:paddingStart">@dimen/half_standard_margin</item>
+        <item name="android:paddingEnd">@dimen/half_standard_margin</item>
+    </style>
+
+    <style name="TwitterExportIndicator" parent="BookIndicator">
+        <item name="android:layout_width">23sp</item>
+        <item name="android:background">@drawable/twitter_indicator_background</item>
+        <item name="srcCompat">@drawable/ic_twitter</item>
+        <item name="android:paddingTop">@dimen/quarter_standard_margin</item>
+        <item name="android:paddingBottom">@dimen/quarter_standard_margin</item>
     </style>
 </resources>
