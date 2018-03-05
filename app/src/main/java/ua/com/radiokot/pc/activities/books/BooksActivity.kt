@@ -1,5 +1,7 @@
 package ua.com.radiokot.pc.activities.books
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.transition.Fade
 import android.support.transition.TransitionManager
@@ -21,6 +23,7 @@ import kotlinx.android.synthetic.main.include_error_empty_view.*
 import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.BaseActivity
+import ua.com.radiokot.pc.activities.add_book.AddBookActivity
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.BooksRepository
@@ -251,6 +254,16 @@ class BooksActivity : BaseActivity() {
             booksRepository.updateIfNotFresh()
         } else {
             booksRepository.update()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == AddBookActivity.ADD_BOOK_REQUEST) {
+                books_list.smoothScrollToPosition(0)
+            }
         }
     }
 }

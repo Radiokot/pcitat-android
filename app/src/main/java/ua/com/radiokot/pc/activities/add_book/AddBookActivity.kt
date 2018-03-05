@@ -1,5 +1,6 @@
 package ua.com.radiokot.pc.activities.add_book
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.os.Build
@@ -163,6 +164,7 @@ class AddBookActivity : BaseActivity() {
                         onNext = {
                             hideAddingProgress()
                             ToastManager.short(R.string.book_added)
+                            setResult(Activity.RESULT_OK)
                             finish()
                         },
                         onError = {
