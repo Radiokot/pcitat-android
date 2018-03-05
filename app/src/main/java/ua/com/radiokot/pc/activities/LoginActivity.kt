@@ -1,6 +1,8 @@
 package ua.com.radiokot.pc.activities
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.text.Editable
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
@@ -45,6 +47,9 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        window.setBackgroundDrawable(
+                ColorDrawable(ContextCompat.getColor(this, R.color.md_white_1000)))
 
         initFields()
         initButtons()

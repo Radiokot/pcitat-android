@@ -18,4 +18,12 @@ class Book(
         val quotesCount: Int? = null,
         @SerializedName("twitterBook")
         val isTwitterBook: Boolean? = null
-    )
+) {
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: super.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return id?.equals((other as? Book)?.id) ?: super.equals(other)
+    }
+}

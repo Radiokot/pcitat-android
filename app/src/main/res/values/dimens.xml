@@ -14,5 +14,5 @@
 
     <dimen name="login_signup_logo_size">128dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
-    <dimen name="one_dp">1dp</dimen>
+    <dimen name="suggested_book_icon_size">48dp</dimen>
 </resources>

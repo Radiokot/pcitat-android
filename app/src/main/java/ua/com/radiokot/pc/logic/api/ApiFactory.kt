@@ -34,6 +34,7 @@ object ApiFactory {
     private var userService: UserService? = null
     private var booksService: BooksService? = null
     private var quotesService: QuotesService? = null
+    private var liveLibService: LiveLibService? = null
 
     // region Service creation
     fun getUserService(): UserService {
@@ -55,6 +56,13 @@ object ApiFactory {
                 .build()
                 .create(QuotesService::class.java)
                 .also { quotesService = it }
+    }
+
+    fun getLiveLibService(): LiveLibService {
+        return liveLibService ?: createBaseRetrofitConfig(getBaseHttpClient())
+                .build()
+                .create(LiveLibService::class.java)
+                .also { liveLibService = it }
     }
     // endregion
 

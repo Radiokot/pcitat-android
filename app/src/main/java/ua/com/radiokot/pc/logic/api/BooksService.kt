@@ -6,8 +6,8 @@ import retrofit2.http.*
 import ua.com.radiokot.pc.logic.api.responses.ApiArrayResponse
 import ua.com.radiokot.pc.logic.api.responses.ApiResponse
 import ua.com.radiokot.pc.logic.model.Book
+import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 import ua.com.radiokot.pc.logic.model.containers.BookIdContainer
-import ua.com.radiokot.pc.logic.model.containers.UrlContainer
 
 /**
  * Created by Oleg Koretsky on 2/20/18.
@@ -20,7 +20,7 @@ interface BooksService {
     fun getById(@Query("id") id: Long?): Observable<ApiResponse<Book>>
 
     @POST("books")
-    fun add(@Body liveLibBookUrl: UrlContainer): Observable<ApiResponse<Book>>
+    fun add(@Body externalBook: ExternalSiteBook): Observable<ApiResponse<Book>>
 
     @DELETE("books")
     fun delete(@Query("id") id: Long?): Completable

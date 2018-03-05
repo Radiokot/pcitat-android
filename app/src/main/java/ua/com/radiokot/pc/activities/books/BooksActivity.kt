@@ -1,10 +1,8 @@
 package ua.com.radiokot.pc.activities.books
 
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.transition.Fade
 import android.support.transition.TransitionManager
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
@@ -18,6 +16,7 @@ import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_books.*
+import kotlinx.android.synthetic.main.default_toolbar.*
 import kotlinx.android.synthetic.main.include_error_empty_view.*
 import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
@@ -26,7 +25,10 @@ import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
-import ua.com.radiokot.pc.util.*
+import ua.com.radiokot.pc.util.DefaultErrorHandler
+import ua.com.radiokot.pc.util.Navigator
+import ua.com.radiokot.pc.util.ObservableTransformers
+import ua.com.radiokot.pc.util.SearchUtil
 import ua.com.radiokot.pc.view.util.LoadingIndicatorManager
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -58,12 +60,8 @@ class BooksActivity : BaseActivity() {
             return
         }
 
-        window.setBackgroundDrawable(
-                ColorDrawable(ContextCompat.getColor(this, R.color.background)))
-
         setContentView(R.layout.activity_books)
-        setSupportActionBar(toolbar)
-        setTitle(R.string.my_books)
+        initToolbar(titleResId = R.string.my_books, needUpButton = false)
 
         initSwipeRefresh()
         initBooksList()
@@ -164,7 +162,7 @@ class BooksActivity : BaseActivity() {
     private fun initFab() {
         books_list.addOnScrollListener(hideFabScrollListener)
         add_fab.onClick {
-            ToastManager.short("Coming soon")
+            Navigator.toAddBookActivity(this)
         }
     }
 

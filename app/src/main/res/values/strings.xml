@@ -17,4 +17,9 @@
     <string name="not_found">Ничего не найдено</string>
     <string name="search">Поиск</string>
     <string name="book_used_for_twitter">Используется для экспорта из Twitter</string>
+    <string name="add_book_title">Добавить книгу</string>
+    <string name="book_search_hint">Название книги или имя автора</string>
+    <string name="error_book_name_already_added">Книга \"%1$s\" уже в вашей коллекции</string>
+    <string name="book_added">Книга добавлена</string>
+    <string name="book_adding_progress">Добавление книги…</string>
 </resources>
