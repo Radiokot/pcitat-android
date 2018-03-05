@@ -6,4 +6,8 @@
         <item name="android:colorAccent">@color/primaryAction</item>
     </style>
 
+    <style name="AppbarElevationView">
+        <item name="android:visibility">gone</item>
+    </style>
+
 </resources>

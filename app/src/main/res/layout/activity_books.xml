@@ -47,4 +47,7 @@
         app:layout_anchor="@id/swipe_refresh"
         app:layout_anchorGravity="bottom|right|end"
         app:srcCompat="@drawable/ic_add" />
+
+    <include layout="@layout/include_appbar_elevation" />
+
 </android.support.design.widget.CoordinatorLayout>
