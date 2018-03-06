@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.default_toolbar.*
 import kotlinx.android.synthetic.main.include_error_empty_view.*
 import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
-import ua.com.radiokot.pc.activities.BaseActivity
+import ua.com.radiokot.pc.activities.NavigationActivity
 import ua.com.radiokot.pc.activities.add_book.AddBookActivity
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.model.Book
@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 
-class BooksActivity : BaseActivity() {
+class BooksActivity : NavigationActivity() {
     companion object {
         private val minBookWidthDp = 140
         val BOOK_COVER_PROPORTION = 1.42
@@ -55,6 +55,8 @@ class BooksActivity : BaseActivity() {
     private val isOnSearch: Boolean
         get() = !searchQuerySubject.value.isEmpty()
 
+    override fun getNavigationItemId(): Long = BOOKS_NAVIGATION_ITEM
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,6 +67,7 @@ class BooksActivity : BaseActivity() {
 
         setContentView(R.layout.activity_books)
         initToolbar(titleResId = R.string.my_books, needUpButton = false)
+        initNavigation()
 
         initSwipeRefresh()
         initBooksList()
