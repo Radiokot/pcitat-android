@@ -15,12 +15,15 @@ import ua.com.radiokot.pc.logic.AppState
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
+import java.io.File
 
 /**
  * Created by Oleg Koretsky on 2/19/18.
  */
 class App : Application() {
     companion object {
+        private val IMAGE_CACHE_DIR_NAME = "images"
+
         private lateinit var mInstance: App
 
         val instance: App
@@ -114,9 +117,17 @@ class App : Application() {
 
     private fun initPicasso() {
         val picasso = Picasso.Builder(this)
-                .downloader(OkHttp3Downloader(externalCacheDir ?: cacheDir))
+                .downloader(OkHttp3Downloader(getImageCacheDir()))
                 .build()
         Picasso.setSingletonInstance(picasso)
     }
     // endregion
+
+    private fun getImageCacheDir(): File {
+        return File(externalCacheDir ?: cacheDir, IMAGE_CACHE_DIR_NAME)
+    }
+
+    fun clearImageCahce() {
+        getImageCacheDir().deleteRecursively()
+    }
 }

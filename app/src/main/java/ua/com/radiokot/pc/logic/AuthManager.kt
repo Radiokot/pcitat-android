@@ -42,6 +42,7 @@ object AuthManager {
     fun logOut() {
         ApiFactory.getBaseCookieJar().clear()
         App.clearState()
+        App.instance.clearImageCahce()
         updateSubject()
     }
 }
