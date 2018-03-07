@@ -25,4 +25,8 @@
     <string name="my_quotes">Мои цитаты</string>
     <string name="logout_action">Выйти</string>
     <string name="profile_settings">Параметры</string>
+    <string name="logout_confirmation">Выйти из аккаунта?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="cancel">Отмена</string>
 </resources>

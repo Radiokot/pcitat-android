@@ -19,6 +19,7 @@ import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.repository.Repositories
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
+import ua.com.radiokot.pc.view.dialog.ConfirmationDialog
 
 /**
  * Root activity with navigation drawer.
@@ -68,6 +69,7 @@ abstract class NavigationActivity : BaseActivity() {
         val logoutItem = PrimaryDrawerItem()
                 .withName(R.string.logout_action)
                 .withIdentifier(LOGOUT_NAVIGATION_ITEM)
+                .withSelectable(false)
                 .withIcon(R.drawable.ic_logout)
 
         val navigationDrawerBuilder = DrawerBuilder()
@@ -120,7 +122,10 @@ abstract class NavigationActivity : BaseActivity() {
         when (item.identifier) {
             getNavigationItemId() -> return false
             BOOKS_NAVIGATION_ITEM -> Navigator.toMainActivity(this)
-            LOGOUT_NAVIGATION_ITEM -> AuthManager.logOut()
+            LOGOUT_NAVIGATION_ITEM ->
+                ConfirmationDialog(this).show(getString(R.string.logout_confirmation)) {
+                    AuthManager.logOut()
+                }
             else -> return false
         }
 
