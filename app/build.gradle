@@ -87,6 +87,10 @@ dependencies {
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     compile 'org.jsoup:jsoup:1.11.2'
 
+    compile "android.arch.persistence.room:runtime:1.1.0-alpha3"
+    compile "android.arch.persistence.room:rxjava2:1.1.0-alpha3"
+    kapt "android.arch.persistence.room:compiler:1.1.0-alpha3"
+
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
     compile "io.reactivex.rxjava2:rxjava:2.1.7"
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'

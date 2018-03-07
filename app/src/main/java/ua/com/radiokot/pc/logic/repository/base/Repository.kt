@@ -23,7 +23,7 @@ abstract class Repository {
 
     var isFresh = false
         protected set
-    var isNewerUpdated = true
+    var isNeverUpdated = true
         protected set
 
     abstract fun update(): Observable<Boolean>

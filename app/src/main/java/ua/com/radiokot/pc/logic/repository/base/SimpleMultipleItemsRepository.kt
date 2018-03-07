@@ -6,8 +6,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 
 abstract class SimpleMultipleItemsRepository<T> : MultipleItemsRepository<T>() {
-    abstract protected fun getItems(): Observable<List<T>>
-
     private var updateResultSubject: PublishSubject<Boolean>? = null
 
     private var updateDisposable: Disposable? = null
@@ -23,20 +21,25 @@ abstract class SimpleMultipleItemsRepository<T> : MultipleItemsRepository<T>() {
                 }
             }
 
-            itemsCache.clear()
             isLoading = true
 
+            val storedItemsObservable =
+                    if (isNeverUpdated) getStoredItems() else Observable.empty()
+
             updateDisposable?.dispose()
-            updateDisposable = getItems()
+            updateDisposable = storedItemsObservable.concatWith(
+                    getItems()
+                            .map {
+                                storeItems(it)
+                                it
+                            }
+            )
                     .subscribeBy(
                             onNext = { items ->
-                                isNewerUpdated = false
-                                isFresh = true
+                                onNewItems(items)
+                            },
+                            onComplete = {
                                 isLoading = false
-
-                                itemsCache.addAll(items)
-
-                                broadcast()
 
                                 updateResultSubject = null
                                 resultSubject.onNext(true)

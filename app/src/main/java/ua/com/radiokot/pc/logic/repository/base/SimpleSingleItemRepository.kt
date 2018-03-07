@@ -6,8 +6,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 
 abstract class SimpleSingleItemRepository<T : Any> : SingleItemRepository<T>() {
-    abstract protected fun getItem(): Observable<T>
-
     private var updateResultSubject: PublishSubject<Boolean>? = null
 
     private var updateDisposable: Disposable? = null
@@ -26,17 +24,23 @@ abstract class SimpleSingleItemRepository<T : Any> : SingleItemRepository<T>() {
             item = null
             isLoading = true
 
+            val storedItemObservable =
+                    if (isNeverUpdated) getStoredItem() else Observable.empty()
+
             updateDisposable?.dispose()
-            updateDisposable = getItem()
+            updateDisposable = storedItemObservable.concatWith(
+                    getItem()
+                            .map {
+                                storeItem(it)
+                                it
+                            }
+            )
                     .subscribeBy(
                             onNext = { newItem: T ->
-                                isNewerUpdated = false
-                                isFresh = true
+                                onNewItem(newItem)
+                            },
+                            onComplete = {
                                 isLoading = false
-
-                                item = newItem
-
-                                broadcast()
 
                                 updateResultSubject = null
                                 resultSubject.onNext(true)

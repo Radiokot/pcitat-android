@@ -110,7 +110,7 @@ class BooksActivity : NavigationActivity() {
         error_empty_view.observeAdapter(booksAdapter) {
             getString(if (isOnSearch) R.string.not_found else R.string.books_empty)
         }
-        error_empty_view.setEmptyViewDenial { booksRepository.isNewerUpdated }
+        error_empty_view.setEmptyViewDenial { booksRepository.isNeverUpdated }
 
         subscribeToBooks()
     }

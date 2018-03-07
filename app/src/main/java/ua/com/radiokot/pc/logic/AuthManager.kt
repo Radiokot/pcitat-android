@@ -3,8 +3,11 @@ package ua.com.radiokot.pc.logic
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import okhttp3.HttpUrl
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.api.ApiFactory
+import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.model.LoginData
 import ua.com.radiokot.pc.logic.model.User
 
@@ -40,9 +43,19 @@ object AuthManager {
     }
 
     fun logOut() {
-        ApiFactory.getBaseCookieJar().clear()
-        App.clearState()
-        App.instance.clearImageCahce()
-        updateSubject()
+        doAsync {
+            ApiFactory.getBaseCookieJar().clear()
+            App.clearState()
+            App.instance.clearImageCahce()
+
+            DbFactory.getAppDatabase().apply {
+                bookDao.clear()
+                userDao.clear()
+            }
+
+            uiThread {
+                updateSubject()
+            }
+        }
     }
 }
