@@ -14,26 +14,12 @@ object Repositories {
     }
 
     fun user(): UserRepository {
-        return App.state.userRepository.let {
-            if (it != null) {
-                it
-            } else {
-                val new = UserRepository()
-                App.state.userRepository = new
-                new
-            }
-        }
+        return App.state.userRepository
+            ?: UserRepository().also { App.state.userRepository = it }
     }
 
     fun books(): BooksRepository {
-        return App.state.booksRepository.let {
-            if (it != null) {
-                it
-            } else {
-                val new = BooksRepository()
-                App.state.booksRepository = new
-                new
-            }
-        }
+        return App.state.booksRepository
+                ?: BooksRepository().also { App.state.booksRepository = it }
     }
 }
