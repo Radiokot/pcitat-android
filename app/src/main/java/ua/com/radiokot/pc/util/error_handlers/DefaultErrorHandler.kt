@@ -1,27 +1,35 @@
-package ua.com.radiokot.pc.util
+package ua.com.radiokot.pc.util.error_handlers
 
 import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.exceptions.NotFoundException
+import ua.com.radiokot.pc.util.ToastManager
 import java.io.IOException
 import java.util.concurrent.CancellationException
 
-object DefaultErrorHandler {
-    fun handle(exception: Throwable? = null) {
-        when (exception) {
+open class DefaultErrorHandler : ErrorHandler {
+    /**
+     * Handles given [Throwable]
+     * @return [true] if [error] was handled, [false] otherwise
+     */
+    override fun handle(error: Throwable): Boolean {
+        when (error) {
             is CancellationException ->
-                return
+                return true
             else -> {
-                getErrorMessage(exception)?.let {
+                return getErrorMessage(error)?.let {
                     ToastManager.short(it)
-                }
+                    true
+                } ?: false
             }
         }
     }
 
-    fun getErrorMessage(exception: Throwable? = null): String? {
-        exception?.printStackTrace()
-        return when (exception) {
+    /**
+     * @return Localized error message for given [Throwable]
+     */
+    override fun getErrorMessage(error: Throwable): String? {
+        return when (error) {
             is CancellationException ->
                 null
             is NotFoundException ->

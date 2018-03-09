@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
-import ua.com.radiokot.pc.util.DefaultErrorHandler
+import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 
 /**
  * Used to display empty or error state.
@@ -59,7 +59,7 @@ class ErrorEmptyView : LinearLayout {
     }
 
     fun showError(throwable: Throwable, actionButtonClick: (() -> Unit)? = null) {
-        showError(DefaultErrorHandler.getErrorMessage(throwable), actionButtonClick)
+        showError(ErrorHandlerFactory.getDefault().getErrorMessage(throwable), actionButtonClick)
     }
 
     fun showError(error: String?, actionButtonClick: (() -> Unit)? = null) {

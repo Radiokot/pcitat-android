@@ -27,10 +27,10 @@ import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
-import ua.com.radiokot.pc.util.DefaultErrorHandler
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.SearchUtil
+import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
 import ua.com.radiokot.pc.view.util.LoadingIndicatorManager
 import java.util.concurrent.TimeUnit
@@ -142,7 +142,7 @@ class BooksActivity : NavigationActivity() {
                 .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
                 .subscribe {
                     if (booksAdapter.hasData) {
-                        DefaultErrorHandler.handle(it)
+                        ErrorHandlerFactory.getByNetworkState().handle(it)
                     } else {
                         error_empty_view.showError(it) {
                             update(true)

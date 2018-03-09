@@ -22,8 +22,8 @@ import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
 import ua.com.radiokot.pc.logic.repository.QuotesRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
-import ua.com.radiokot.pc.util.DefaultErrorHandler
 import ua.com.radiokot.pc.util.ObservableTransformers
+import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.util.extensions.getStringExtra
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
 import ua.com.radiokot.pc.view.util.LoadingIndicatorManager
@@ -214,7 +214,7 @@ class QuotesActivity : NavigationActivity() {
                 .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
                 .subscribe {
                     if (quotesAdapter.hasData) {
-                        DefaultErrorHandler.handle(it)
+                        ErrorHandlerFactory.getByNetworkState().handle(it)
                     } else {
                         error_empty_view.showError(it) {
                             update(true)

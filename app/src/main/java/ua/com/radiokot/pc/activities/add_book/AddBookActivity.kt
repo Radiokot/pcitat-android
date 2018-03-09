@@ -24,9 +24,9 @@ import ua.com.radiokot.pc.logic.exceptions.ConflictException
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
-import ua.com.radiokot.pc.util.DefaultErrorHandler
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.ToastManager
+import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import java.util.concurrent.TimeUnit
 
 class AddBookActivity : BaseActivity() {
@@ -122,7 +122,7 @@ class AddBookActivity : BaseActivity() {
                             onError = {
                                 progress.hide()
                                 if (booksAdapter.hasData) {
-                                    DefaultErrorHandler.handle(it)
+                                    ErrorHandlerFactory.getDefault().handle(it)
                                 } else {
                                     error_empty_view.showError(it) {
                                         searchBooks(query)
@@ -173,7 +173,7 @@ class AddBookActivity : BaseActivity() {
                                 is ConflictException ->
                                     ToastManager.long(getString(R.string.error_book_name_already_added,
                                             book.title))
-                                else -> DefaultErrorHandler.handle(it)
+                                else -> ErrorHandlerFactory.getDefault().handle(it)
                             }
                         }
                 )

@@ -16,10 +16,10 @@ import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.exceptions.NotFoundException
 import ua.com.radiokot.pc.logic.model.LoginData
 import ua.com.radiokot.pc.logic.repository.Repositories
-import ua.com.radiokot.pc.util.DefaultErrorHandler
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.SoftInputUtil
+import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.util.text_validators.hasError
 import ua.com.radiokot.pc.util.text_validators.setErrorAndFocus
 import ua.com.radiokot.pc.view.util.edittext.EditTextUtil
@@ -123,7 +123,7 @@ class LoginActivity : BaseActivity() {
                                 is NotFoundException ->
                                     EditTextUtil.displayErrorWithFocus(password_edit_text,
                                             R.string.error_invalid_pass)
-                                else -> DefaultErrorHandler.handle(it)
+                                else -> ErrorHandlerFactory.getDefault().handle(it)
                             }
 
                             updateLoginAvailability()
