@@ -9,6 +9,7 @@ import ua.com.radiokot.pc.logic.db.entities.BookEntity
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 import ua.com.radiokot.pc.logic.repository.base.SimpleMultipleItemsRepository
+import ua.com.radiokot.pc.util.extensions.doNotEmitEmptyList
 
 /**
  * Holds user's books.
@@ -25,6 +26,7 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                 .subscribeOn(Schedulers.io())
                 .map { it.map { it.toBook() } }
                 .toObservable()
+                .doNotEmitEmptyList()
     }
 
     fun addExternalBook(externalSiteBook: ExternalSiteBook): Observable<Book> {
