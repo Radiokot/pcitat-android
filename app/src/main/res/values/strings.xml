@@ -29,4 +29,8 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="cancel">Отмена</string>
+    <string name="delete_action">Удалить</string>
+    <string name="use_for_twitter_action">Использовать для экспорта из Twitter</string>
+    <string name="quotes_empty">Здесь будут ваши цитаты</string>
+    <string name="quote_book_title">— %1$s</string>
 </resources>

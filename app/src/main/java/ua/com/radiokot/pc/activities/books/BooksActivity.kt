@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.transition.Fade
 import android.support.transition.TransitionManager
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SimpleItemAnimator
 import android.util.DisplayMetrics
@@ -32,6 +31,7 @@ import ua.com.radiokot.pc.util.DefaultErrorHandler
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.SearchUtil
+import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
 import ua.com.radiokot.pc.view.util.LoadingIndicatorManager
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -97,6 +97,11 @@ class BooksActivity : NavigationActivity() {
         val bookCoverHeight = estimatedBookCoverWidth * BOOK_COVER_PROPORTION
         booksAdapter.coverHeight = bookCoverHeight.roundToInt()
 
+        booksAdapter.onItemClick { _, book ->
+            Navigator.openQuotesActivity(this,
+                    book.id, book.title, book.authorName, book.isTwitterBook)
+        }
+
         books_list.apply {
             layoutManager = GridLayoutManager(this@BooksActivity, spanCount)
             setHasFixedSize(true)
@@ -154,21 +159,10 @@ class BooksActivity : NavigationActivity() {
                 .subscribe { displayBooks() }
     }
 
-    private val hideFabScrollListener =
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                    if (dy > 2) {
-                        add_fab.hide()
-                    } else if (dy < -2 && add_fab.isEnabled) {
-                        add_fab.show()
-                    }
-                }
-            }
-
     private fun initFab() {
-        books_list.addOnScrollListener(hideFabScrollListener)
+        books_list.addOnScrollListener(HideFabOnScrollListener(add_fab))
         add_fab.onClick {
-            Navigator.toAddBookActivity(this)
+            Navigator.openAddBookActivity(this)
         }
     }
 

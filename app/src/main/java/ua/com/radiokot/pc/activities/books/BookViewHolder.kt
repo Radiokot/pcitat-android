@@ -11,6 +11,7 @@ import org.jetbrains.anko.find
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.view.adapter.BaseViewHolder
+import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 class BookViewHolder(view: View, coverHeight: Int) : BaseViewHolder<Book>(view) {
     private val titleTextView = view.find<TextView>(R.id.book_title_text_view)
@@ -30,6 +31,7 @@ class BookViewHolder(view: View, coverHeight: Int) : BaseViewHolder<Book>(view) 
     override fun bind(item: Book) {
         titleTextView.text = item.title
         quotesCountTextView.text = (item.quotesCount ?: 0).toString()
+        quotesCountTextView.typeface = TypefaceUtil.getRobotoSlabRegular()
 
         twitterExportIndicator.visibility =
                 if (item.isTwitterBook == true) View.VISIBLE else View.GONE

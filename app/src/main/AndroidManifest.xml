@@ -30,8 +30,8 @@
             android:name=".activities.LoginActivity"
             android:configChanges="screenSize|orientation"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".activities.add_book.AddBookActivity" />
+        <activity android:name=".activities.add_book.AddBookActivity" />
+        <activity android:name=".activities.quotes.QuotesActivity" />
     </application>
 
 </manifest>

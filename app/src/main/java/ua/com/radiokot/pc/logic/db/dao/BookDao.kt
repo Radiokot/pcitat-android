@@ -17,7 +17,4 @@ interface BookDao {
 
     @Query("DELETE FROM book WHERE id NOT IN (:ids)")
     fun leaveOnlyIds(vararg ids: Long?)
-
-    @Query("DELETE FROM book")
-    fun clear()
 }

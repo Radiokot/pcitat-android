@@ -4,15 +4,22 @@
     <dimen name="half_standard_margin">8dp</dimen>
     <dimen name="standard_margin">16dp</dimen>
     <dimen name="double_standard_margin">32dp</dimen>
+    <dimen name="triple_standard_margin">48dp</dimen>
 
     <dimen name="half_standard_padding">12dp</dimen>
     <dimen name="standard_padding">24dp</dimen>
     <dimen name="double_standard_padding">48dp</dimen>
 
-    <dimen name="text_size_heading">22sp</dimen>
+    <dimen name="text_size_heading">24sp</dimen>
+    <dimen name="text_size_expanded_book_author">18sp</dimen>
     <dimen name="text_size_book_heading">16sp</dimen>
+    <dimen name="text_size_quote_card">16sp</dimen>
 
     <dimen name="login_signup_logo_size">128dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="suggested_book_icon_size">48dp</dimen>
+    <dimen name="expanded_toolbar_height">192dp</dimen>
+    <dimen name="expanded_book_title_margin_top">64dp</dimen>
+    <dimen name="expanded_book_author_margin_top">104dp</dimen>
+    <dimen name="expanded_book_author_extra_padding_top">28dp</dimen>
 </resources>

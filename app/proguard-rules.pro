@@ -54,3 +54,11 @@
 -keep class android.support.v7.app.** { *; }
 -keep interface android.support.v7.app.** { *; }
 -keep class android.support.v7.widget.** { *; }
+
+# Multiline collapsing toolbar for lines count hack
+-keepclassmembers class net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout {
+    private net.opacapp.multilinecollapsingtoolbar.CollapsingTextHelper mCollapsingTextHelper;
+}
+-keepclassmembers class net.opacapp.multilinecollapsingtoolbar.CollapsingTextHelper {
+    private android.text.StaticLayout mTextLayout;
+}

@@ -48,10 +48,7 @@ object AuthManager {
             App.clearState()
             App.instance.clearImageCahce()
 
-            DbFactory.getAppDatabase().apply {
-                bookDao.clear()
-                userDao.clear()
-            }
+            DbFactory.getAppDatabase().clearAllTables()
 
             uiThread {
                 updateSubject()
