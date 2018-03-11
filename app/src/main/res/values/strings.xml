@@ -19,7 +19,7 @@
     <string name="book_used_for_twitter">Используется для экспорта из Twitter</string>
     <string name="add_book_title">Добавить книгу</string>
     <string name="book_search_hint">Название книги или имя автора</string>
-    <string name="error_book_name_already_added">Книга \"%1$s\" уже в вашей коллекции</string>
+    <string name="error_book_name_already_added">Книга «%1$s» уже в вашей коллекции</string>
     <string name="book_added">Книга добавлена</string>
     <string name="book_adding_progress">Добавление книги…</string>
     <string name="my_quotes">Мои цитаты</string>
@@ -35,4 +35,7 @@
     <string name="quote_book_title">— %1$s</string>
     <string name="this_book_is_used_for_twitter_export">Эта книга используется для экспорта из Twitter</string>
     <string name="twitter_export_enabled">Теперь отрывки, отправленные с Kindle через Twitter, будут добавляться к этой книге</string>
+    <string name="delete_book_name_confirmation">Удалить книгу «%1$s» и все цитаты из нее?</string>
+    <string name="book_deleting_progress">Удаление книги…</string>
+    <string name="book_deleted">Книга удалена</string>
 </resources>

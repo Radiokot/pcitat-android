@@ -17,4 +17,7 @@ interface BookDao {
 
     @Update()
     fun update(vararg books: BookEntity)
+
+    @Delete()
+    fun delete(vararg books: BookEntity)
 }

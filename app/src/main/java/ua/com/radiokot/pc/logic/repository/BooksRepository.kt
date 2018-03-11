@@ -57,6 +57,19 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                 }
     }
 
+    fun delete(bookId: Long): Completable {
+        return ApiFactory.getBooksService().delete(bookId)
+                .doOnComplete {
+                    val deleted = itemsCache.find { it.id == bookId }
+
+                    itemsCache.remove(deleted)
+                    broadcast()
+
+                    deleteBooks(deleted)
+                }
+    }
+
+    // region Db
     override fun storeItems(items: List<Book>) {
         super.storeItems(items)
         doAsync {
@@ -96,4 +109,18 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
             )
         }
     }
+
+    private fun deleteBooks(vararg books: Book?) {
+        doAsync {
+            DbFactory.getAppDatabase().bookDao.delete(
+                    *books
+                            .filterNotNull()
+                            .map {
+                                BookEntity.fromBook(it)
+                            }
+                            .toTypedArray()
+            )
+        }
+    }
+    // endregion
 }

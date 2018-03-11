@@ -1,6 +1,8 @@
 package ua.com.radiokot.pc.activities.quotes
 
 import android.app.Activity
+import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -30,8 +32,8 @@ import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.ToastManager
 import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.util.extensions.getStringExtra
+import ua.com.radiokot.pc.view.dialog.ConfirmationDialog
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
-import ua.com.radiokot.pc.view.util.LoadingIndicatorManager
 import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 class QuotesActivity : NavigationActivity() {
@@ -59,10 +61,6 @@ class QuotesActivity : NavigationActivity() {
             field = value
             updateTwitterIndicator()
         }
-    private val loadingIndicator = LoadingIndicatorManager(
-            showLoading = { swipe_refresh.isRefreshing = true },
-            hideLoading = { swipe_refresh.isRefreshing = false }
-    )
 
     private val quotesRepository: QuotesRepository
         get() =
@@ -211,7 +209,7 @@ class QuotesActivity : NavigationActivity() {
         quotesLoadingDisposable = quotesRepository.loadingSubject
                 .compose(ObservableTransformers.defaultSchedulers())
                 .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe { loadingIndicator.setLoading(it, "quotes") }
+                .subscribe { swipe_refresh.isRefreshing = it }
 
         quotesErrorsDisposable?.dispose()
         quotesErrorsDisposable = quotesRepository.errorsSubject
@@ -240,6 +238,7 @@ class QuotesActivity : NavigationActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.use_for_twitter -> tryEnableTwitterExport()
+            R.id.delete -> tryToDeleteBook()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -288,6 +287,51 @@ class QuotesActivity : NavigationActivity() {
                             setResult(Activity.RESULT_OK)
                         },
                         onError = {
+                            ErrorHandlerFactory.getDefault().handle(it)
+                        }
+                )
+    }
+    // endregion
+
+    // region Delete
+    private fun tryToDeleteBook() {
+        ConfirmationDialog(this)
+                .show(getString(R.string.delete_book_name_confirmation, bookTitle)) {
+                    deleteBook()
+                }
+    }
+
+    var deleteProgressDialog: ProgressDialog? = null
+    private fun displayDeleteBookProgress(cancelListener: DialogInterface.OnCancelListener? = null) {
+        hideDeleteBookProgress()
+        deleteProgressDialog = ProgressDialog.show(this, null,
+                getString(R.string.book_deleting_progress), true, true)
+        deleteProgressDialog?.setOnCancelListener(cancelListener)
+    }
+
+    private fun hideDeleteBookProgress() {
+        deleteProgressDialog?.dismiss()
+    }
+
+    private var deleteBookDisposable: Disposable? = null
+    private fun deleteBook() {
+        deleteBookDisposable?.dispose()
+        deleteBookDisposable = booksRepository.delete(bookId)
+                .compose(ObservableTransformers.defaultSchedulersCompletable())
+                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+                .doOnSubscribe {
+                    displayDeleteBookProgress(DialogInterface.OnCancelListener {
+                        deleteBookDisposable?.dispose()
+                    })
+                }
+                .subscribeBy(
+                        onComplete = {
+                            hideDeleteBookProgress()
+                            ToastManager.short(R.string.book_deleted)
+                            finish()
+                        },
+                        onError = {
+                            hideDeleteBookProgress()
                             ErrorHandlerFactory.getDefault().handle(it)
                         }
                 )
