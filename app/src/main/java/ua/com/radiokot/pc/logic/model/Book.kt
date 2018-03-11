@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName
 class Book(
         @SerializedName("id")
         val id: Long? = null,
+        @SerializedName("pagingToken")
+        val pagingToken: Int? = null,
         @SerializedName("title")
         val title: String? = null,
         @SerializedName("author")
@@ -17,7 +19,7 @@ class Book(
         @SerializedName("quotesCount")
         val quotesCount: Int? = null,
         @SerializedName("twitterBook")
-        val isTwitterBook: Boolean? = null
+        var isTwitterBook: Boolean? = null
 ) {
     override fun hashCode(): Int {
         return id?.hashCode() ?: super.hashCode()

@@ -33,4 +33,6 @@
     <string name="use_for_twitter_action">Использовать для экспорта из Twitter</string>
     <string name="quotes_empty">Здесь будут ваши цитаты</string>
     <string name="quote_book_title">— %1$s</string>
+    <string name="this_book_is_used_for_twitter_export">Эта книга используется для экспорта из Twitter</string>
+    <string name="twitter_export_enabled">Теперь отрывки, отправленные с Kindle через Twitter, будут добавляться к этой книге</string>
 </resources>

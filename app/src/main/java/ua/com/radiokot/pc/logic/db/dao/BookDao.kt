@@ -1,15 +1,12 @@
 package ua.com.radiokot.pc.logic.db.dao
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import io.reactivex.Single
 import ua.com.radiokot.pc.logic.db.entities.BookEntity
 
 @Dao
 interface BookDao {
-    @Query("SELECT * FROM book ORDER BY display_order DESC")
+    @Query("SELECT * FROM book ORDER BY paging_token DESC")
     fun getAll(): Single<List<BookEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -17,4 +14,7 @@ interface BookDao {
 
     @Query("DELETE FROM book WHERE id NOT IN (:ids)")
     fun leaveOnlyIds(vararg ids: Long?)
+
+    @Update()
+    fun update(vararg books: BookEntity)
 }

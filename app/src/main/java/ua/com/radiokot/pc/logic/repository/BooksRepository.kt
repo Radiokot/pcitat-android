@@ -1,5 +1,6 @@
 package ua.com.radiokot.pc.logic.repository
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
@@ -8,6 +9,7 @@ import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.db.entities.BookEntity
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
+import ua.com.radiokot.pc.logic.model.containers.BookIdContainer
 import ua.com.radiokot.pc.logic.repository.base.SimpleMultipleItemsRepository
 import ua.com.radiokot.pc.util.extensions.doNotEmitEmptyList
 
@@ -41,14 +43,27 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                 }
     }
 
+    fun setTwitterBook(bookId: Long): Completable {
+        return ApiFactory.getBooksService().setTwitterBook(BookIdContainer(bookId))
+                .doOnComplete {
+                    val prevTwitterBook = itemsCache.find { it.isTwitterBook == true }
+                    val selectedBook = itemsCache.find { it.id == bookId } ?: return@doOnComplete
+
+                    prevTwitterBook?.isTwitterBook = false
+                    selectedBook.isTwitterBook = true
+                    broadcast()
+
+                    updateBooks(selectedBook, prevTwitterBook)
+                }
+    }
+
     override fun storeItems(items: List<Book>) {
         super.storeItems(items)
         doAsync {
-            var order = items.size
             DbFactory.getAppDatabase().bookDao.apply {
                 insert(*items
                         .map {
-                            BookEntity.fromBook(it, --order)
+                            BookEntity.fromBook(it)
                         }
                         .toTypedArray()
                 )
@@ -65,8 +80,20 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
 
     private fun storeSingleBook(book: Book) {
         doAsync {
-            DbFactory.getAppDatabase().bookDao.insert(BookEntity.fromBook(book,
-                    itemsCache.size - 1))
+            DbFactory.getAppDatabase().bookDao.insert(BookEntity.fromBook(book))
+        }
+    }
+
+    private fun updateBooks(vararg books: Book?) {
+        doAsync {
+            DbFactory.getAppDatabase().bookDao.update(
+                    *books
+                            .filterNotNull()
+                            .map {
+                                BookEntity.fromBook(it)
+                            }
+                            .toTypedArray()
+            )
         }
     }
 }

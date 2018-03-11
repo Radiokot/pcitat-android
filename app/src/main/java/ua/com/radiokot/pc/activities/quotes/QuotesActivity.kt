@@ -1,5 +1,6 @@
 package ua.com.radiokot.pc.activities.quotes
 
+import android.app.Activity
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -14,15 +15,19 @@ import android.view.View
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_quotes.*
 import kotlinx.android.synthetic.main.default_toolbar.*
 import kotlinx.android.synthetic.main.include_error_empty_view.*
+import kotlinx.android.synthetic.main.layout_progress.*
 import kotlinx.android.synthetic.main.quotes_book_appbar.*
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
+import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.QuotesRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
 import ua.com.radiokot.pc.util.ObservableTransformers
+import ua.com.radiokot.pc.util.ToastManager
 import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.util.extensions.getStringExtra
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
@@ -31,6 +36,8 @@ import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 class QuotesActivity : NavigationActivity() {
     companion object {
+        val UPDATE_BOOK_REQUEST = "update_book".hashCode() and 0xffff
+
         val BOOK_ID_EXTRA = "book_id"
         val BOOK_TITLE_EXTRA = "book_title"
         val BOOK_AUTHOR_EXTRA = "book_author"
@@ -50,11 +57,7 @@ class QuotesActivity : NavigationActivity() {
     private var isBookUsedForTwitter = false
         set(value) {
             field = value
-            twitterMenuItem?.icon =
-                    if (value)
-                        ContextCompat.getDrawable(this, R.drawable.ic_twitter)
-                    else
-                        ContextCompat.getDrawable(this, R.drawable.ic_twitter_outline)
+            updateTwitterIndicator()
         }
     private val loadingIndicator = LoadingIndicatorManager(
             showLoading = { swipe_refresh.isRefreshing = true },
@@ -67,6 +70,8 @@ class QuotesActivity : NavigationActivity() {
                 Repositories.quotes(bookId)
             else
                 Repositories.quotes()
+    private val booksRepository: BooksRepository
+        get() = Repositories.books()
     private val quotesAdapter = QuotesAdapter()
 
     override fun getNavigationItemId(): Long = QUOTES_NAVIGATION_ITEM
@@ -156,8 +161,8 @@ class QuotesActivity : NavigationActivity() {
             twitterMenuItem = menu?.findItem(R.id.use_for_twitter)
             MenuItemCompat.setIconTintList(twitterMenuItem,
                     ColorStateList.valueOf(ContextCompat.getColor(this, R.color.icon)))
-            isBookUsedForTwitter = isBookUsedForTwitter
 
+            updateTwitterIndicator()
             updateBookAuthorSpacing()
         }
         return super.onCreateOptionsMenu(menu)
@@ -224,6 +229,21 @@ class QuotesActivity : NavigationActivity() {
     }
     // endregion
 
+    private fun updateTwitterIndicator() {
+        twitterMenuItem?.icon =
+                if (isBookUsedForTwitter)
+                    ContextCompat.getDrawable(this, R.drawable.ic_twitter)
+                else
+                    ContextCompat.getDrawable(this, R.drawable.ic_twitter_outline)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.use_for_twitter -> tryEnableTwitterExport()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun update(force: Boolean = false) {
         if (!force) {
             quotesRepository.updateIfNotFresh()
@@ -232,8 +252,45 @@ class QuotesActivity : NavigationActivity() {
         }
     }
 
+    override fun invalidateOptionsMenu() {
+        super.invalidateOptionsMenu()
+        updateTwitterIndicator()
+    }
+
     private fun displayQuotes() {
         val quotes = quotesRepository.itemsSubject.value
         quotesAdapter.setData(quotes)
     }
+
+    // region Twitter export
+    private fun tryEnableTwitterExport() {
+        if (isBookUsedForTwitter) {
+            ToastManager.long(R.string.this_book_is_used_for_twitter_export)
+        } else {
+            enableTwitterExport()
+        }
+    }
+
+    private fun enableTwitterExport() {
+        booksRepository.setTwitterBook(bookId)
+                .compose(ObservableTransformers.defaultSchedulersCompletable())
+                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+                .doOnSubscribe {
+                    progress.show()
+                }
+                .doOnTerminate {
+                    progress.hide()
+                }
+                .subscribeBy(
+                        onComplete = {
+                            isBookUsedForTwitter = true
+                            ToastManager.long(R.string.twitter_export_enabled)
+                            setResult(Activity.RESULT_OK)
+                        },
+                        onError = {
+                            ErrorHandlerFactory.getDefault().handle(it)
+                        }
+                )
+    }
+    // endregion
 }

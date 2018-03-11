@@ -23,6 +23,7 @@ import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
 import ua.com.radiokot.pc.activities.add_book.AddBookActivity
+import ua.com.radiokot.pc.activities.quotes.QuotesActivity
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.BooksRepository
@@ -258,8 +259,11 @@ class BooksActivity : NavigationActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == AddBookActivity.ADD_BOOK_REQUEST) {
-                books_list.smoothScrollToPosition(0)
+            when (requestCode) {
+                AddBookActivity.ADD_BOOK_REQUEST ->
+                    books_list.smoothScrollToPosition(0)
+                QuotesActivity.UPDATE_BOOK_REQUEST ->
+                    booksAdapter.notifyDataSetChanged()
             }
         }
     }

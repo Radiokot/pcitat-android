@@ -60,11 +60,11 @@ object Navigator {
 
     fun openQuotesActivity(activity: Activity, bookId: Long?, bookTitle: String?,
                            bookAuthor: String?, isTwitterBook: Boolean?) {
-        activity.startActivity(activity.intentFor<QuotesActivity>(
+        activity.startActivityForResult(activity.intentFor<QuotesActivity>(
                 QuotesActivity.BOOK_ID_EXTRA to bookId,
                 QuotesActivity.BOOK_TITLE_EXTRA to bookTitle,
                 QuotesActivity.BOOK_AUTHOR_EXTRA to bookAuthor,
                 QuotesActivity.BOOK_IS_TWITTER_EXTRA to isTwitterBook
-        ))
+        ), QuotesActivity.UPDATE_BOOK_REQUEST)
     }
 }
