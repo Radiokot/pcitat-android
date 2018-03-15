@@ -47,4 +47,19 @@ open class QuotesRepository : SimpleMultipleItemsRepository<Quote>() {
             }
         }
     }
+
+    fun deleteFromBookLocally(bookId: Long) {
+        itemsCache.removeAll {
+            it.bookId == bookId
+        }
+        broadcast()
+
+        deleteFromBookInDb(bookId)
+    }
+
+    private fun deleteFromBookInDb(bookId: Long) {
+        doAsync {
+            DbFactory.getAppDatabase().quoteDao.deleteFromBook(bookId)
+        }
+    }
 }

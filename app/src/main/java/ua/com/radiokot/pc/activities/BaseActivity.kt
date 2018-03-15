@@ -1,15 +1,33 @@
 package ua.com.radiokot.pc.activities
 
 import android.os.Build
+import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.TextView
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import kotlinx.android.synthetic.main.default_toolbar.*
 import ua.com.radiokot.pc.R
+import ua.com.radiokot.pc.logic.event_bus.PcEvents
+import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
 import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 abstract class BaseActivity : RxAppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        subscribeToEvents()
+    }
+
+    // region Event bus
+    protected open fun subscribeToEvents() {
+        PcEvents.subscribeUntilDestroy(this, this::onPcEvent)
+    }
+
+    protected open fun onPcEvent(event: PcEvent) {}
+    // endregion
+
+    // region Toolbar
     protected fun initToolbar(title: String? = null, needBackButton: Boolean = true) {
         setSupportActionBar(getToolbar())
         setTitle(title)
@@ -50,4 +68,5 @@ abstract class BaseActivity : RxAppCompatActivity() {
         }
         return titleTextView
     }
+    // endregion
 }

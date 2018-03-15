@@ -2,6 +2,8 @@ package ua.com.radiokot.pc.logic.repository
 
 import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.AuthManager
+import ua.com.radiokot.pc.logic.event_bus.PcEvents
+import ua.com.radiokot.pc.logic.event_bus.events.BookDeletedEvent
 
 /**
  * Manages repositories instances.
@@ -10,6 +12,15 @@ object Repositories {
     init {
         if (AuthManager.isAuthorized()) {
             user().updateIfNotFresh()
+        }
+
+        PcEvents.subscribe { event ->
+            when (event) {
+                is BookDeletedEvent -> {
+                    App.state.quotesByBookRepositoriesByBook.remove(event.bookId)
+                    quotes().deleteFromBookLocally(event.bookId)
+                }
+            }
         }
     }
 

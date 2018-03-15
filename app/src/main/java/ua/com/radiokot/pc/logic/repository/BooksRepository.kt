@@ -7,6 +7,10 @@ import org.jetbrains.anko.doAsync
 import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.db.entities.BookEntity
+import ua.com.radiokot.pc.logic.event_bus.PcEvents
+import ua.com.radiokot.pc.logic.event_bus.events.BookAddedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.BookDeletedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.TwitterBookChangedEvent
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 import ua.com.radiokot.pc.logic.model.containers.BookIdContainer
@@ -39,6 +43,8 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                         itemsCache.add(0, it)
                         storeSingleBook(it)
                         broadcast()
+
+                        PcEvents.publish(BookAddedEvent(it))
                     }
                 }
     }
@@ -53,6 +59,8 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                     selectedBook.isTwitterBook = true
                     broadcast()
 
+                    PcEvents.publish(TwitterBookChangedEvent(bookId))
+
                     updateBooks(selectedBook, prevTwitterBook)
                 }
     }
@@ -64,6 +72,8 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
 
                     itemsCache.remove(deleted)
                     broadcast()
+
+                    PcEvents.publish(BookDeletedEvent(bookId))
 
                     deleteBooks(deleted)
                 }

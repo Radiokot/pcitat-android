@@ -23,4 +23,7 @@ interface QuoteDao {
 
     @Query("DELETE FROM quote WHERE book_id = :bookId AND id NOT IN (:ids)")
     fun leaveOnlyIdsForBook(bookId: Long, ids: List<Long?>)
+
+    @Query("DELETE FROM quote WHERE book_id = :bookId")
+    fun deleteFromBook(bookId: Long)
 }

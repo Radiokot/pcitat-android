@@ -1,7 +1,5 @@
 package ua.com.radiokot.pc.activities.books
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.support.transition.Fade
 import android.support.transition.TransitionManager
@@ -22,9 +20,10 @@ import kotlinx.android.synthetic.main.include_error_empty_view.*
 import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
-import ua.com.radiokot.pc.activities.add_book.AddBookActivity
-import ua.com.radiokot.pc.activities.quotes.QuotesActivity
 import ua.com.radiokot.pc.logic.AuthManager
+import ua.com.radiokot.pc.logic.event_bus.events.BookAddedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
+import ua.com.radiokot.pc.logic.event_bus.events.TwitterBookChangedEvent
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
@@ -255,16 +254,12 @@ class BooksActivity : NavigationActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                AddBookActivity.ADD_BOOK_REQUEST ->
-                    books_list.smoothScrollToPosition(0)
-                QuotesActivity.UPDATE_BOOK_REQUEST ->
-                    booksAdapter.notifyDataSetChanged()
-            }
+    override fun onPcEvent(event: PcEvent) {
+        when (event) {
+            is BookAddedEvent ->
+                books_list.smoothScrollToPosition(0)
+            is TwitterBookChangedEvent ->
+                booksAdapter.notifyDataSetChanged()
         }
     }
 }
