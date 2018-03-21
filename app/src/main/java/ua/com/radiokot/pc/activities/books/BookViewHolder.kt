@@ -13,7 +13,7 @@ import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.view.adapter.BaseViewHolder
 import ua.com.radiokot.pc.view.util.TypefaceUtil
 
-class BookViewHolder(view: View, coverHeight: Int) : BaseViewHolder<Book>(view) {
+class BookViewHolder(view: View, coverHeight: Int) : BaseViewHolder<BookListItem>(view) {
     private val titleTextView = view.find<TextView>(R.id.book_title_text_view)
     private val quotesCountTextView = view.find<TextView>(R.id.quotes_count_text_view)
     private val coverImageView = view.find<ImageView>(R.id.book_cover_image_view)
@@ -28,7 +28,7 @@ class BookViewHolder(view: View, coverHeight: Int) : BaseViewHolder<Book>(view) 
                         coverHeight)
     }
 
-    override fun bind(item: Book) {
+    override fun bind(item: BookListItem) {
         titleTextView.text = item.title
         quotesCountTextView.text = (item.quotesCount ?: 0).toString()
         quotesCountTextView.typeface = TypefaceUtil.getRobotoSlabRegular()

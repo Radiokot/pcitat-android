@@ -6,6 +6,8 @@ import org.jetbrains.anko.doAsync
 import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.db.entities.QuoteEntity
+import ua.com.radiokot.pc.logic.event_bus.PcEvents
+import ua.com.radiokot.pc.logic.event_bus.events.BookQuotesUpdatedEvent
 import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.util.extensions.doNotEmitEmptyList
 
@@ -16,6 +18,9 @@ class QuotesByBookRepository(private val bookId: Long) : QuotesRepository() {
     override fun getItems(): Observable<List<Quote>> {
         return ApiFactory.getQuotesService().getByBookId(bookId)
                 .map { it.data.items }
+                .doOnNext {
+                    PcEvents.publish(BookQuotesUpdatedEvent(bookId, it))
+                }
     }
 
     override fun getStoredItems(): Observable<List<Quote>> {

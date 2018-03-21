@@ -23,7 +23,6 @@ import ua.com.radiokot.pc.activities.NavigationActivity
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.event_bus.events.BookAddedEvent
 import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
-import ua.com.radiokot.pc.logic.event_bus.events.TwitterBookChangedEvent
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
@@ -229,7 +228,11 @@ class BooksActivity : NavigationActivity() {
                 else
                     { _ -> true }
 
-        booksAdapter.setData(books.filter(searchPredicate))
+        booksAdapter.setData(
+                books
+                        .filter(searchPredicate)
+                        .map { BookListItem(it) }
+        )
     }
 
     private var fabWasVisible = false
@@ -258,8 +261,6 @@ class BooksActivity : NavigationActivity() {
         when (event) {
             is BookAddedEvent ->
                 books_list.smoothScrollToPosition(0)
-            is TwitterBookChangedEvent ->
-                booksAdapter.notifyDataSetChanged()
         }
     }
 }

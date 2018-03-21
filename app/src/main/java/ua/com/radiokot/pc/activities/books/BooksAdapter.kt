@@ -5,10 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.R
-import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.view.adapter.BaseRecyclerAdapter
 
-class BooksAdapter : BaseRecyclerAdapter<Book, BookViewHolder>() {
+class BooksAdapter : BaseRecyclerAdapter<BookListItem, BookViewHolder>() {
     var coverHeight: Int = 0
 
     override fun createItemViewHolder(parent: ViewGroup?): BookViewHolder {
@@ -17,7 +16,7 @@ class BooksAdapter : BaseRecyclerAdapter<Book, BookViewHolder>() {
         return BookViewHolder(view, coverHeight)
     }
 
-    override fun getDiffCallback(newItems: List<Book>): DiffUtil.Callback? {
+    override fun getDiffCallback(newItems: List<BookListItem>): DiffUtil.Callback? {
         return object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return items[oldItemPosition].id == newItems[newItemPosition].id
@@ -32,8 +31,10 @@ class BooksAdapter : BaseRecyclerAdapter<Book, BookViewHolder>() {
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return areItemsTheSame(oldItemPosition, newItemPosition)
-                        && items[oldItemPosition].quotesCount == newItems[newItemPosition].quotesCount
+                val old = items[oldItemPosition]
+                val new = newItems[newItemPosition]
+                return new.quotesCount == old.quotesCount
+                        && new.isTwitterBook == old.isTwitterBook
             }
         }
     }

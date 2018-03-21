@@ -79,6 +79,17 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                 }
     }
 
+    fun updateBookQuotesCount(bookId: Long, quotesCount: Int) {
+        val updatingBook = itemsCache.find { it.id == bookId }
+
+        if (updatingBook != null && updatingBook.quotesCount != quotesCount) {
+            updatingBook.quotesCount = quotesCount
+            broadcast()
+
+            updateBooks(updatingBook)
+        }
+    }
+
     // region Db
     override fun storeItems(items: List<Book>) {
         super.storeItems(items)
