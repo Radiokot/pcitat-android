@@ -196,4 +196,12 @@ abstract class NavigationActivity : BaseActivity() {
     }
 
     abstract fun getNavigationItemId(): Long
+
+    override fun onBackPressed() {
+        if (navigationDrawer?.isDrawerOpen == true) {
+            navigationDrawer?.closeDrawer()
+        } else {
+            super.onBackPressed()
+        }
+    }
 }
