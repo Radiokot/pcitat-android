@@ -5,6 +5,11 @@
         android:id="@+id/save"
         android:icon="@drawable/ic_check"
         android:title="@string/save_action"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/share"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share_action"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/delete"

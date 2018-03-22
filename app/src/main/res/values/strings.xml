@@ -46,4 +46,5 @@
     <string name="quote_saved">Цитата сохранена</string>
     <string name="quote_deleting_progress">Удаление цитаты…</string>
     <string name="quote_deleted">Цитата удалена</string>
+    <string name="share_action">Поделиться</string>
 </resources>
