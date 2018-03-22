@@ -8,9 +8,7 @@ import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.db.entities.BookEntity
 import ua.com.radiokot.pc.logic.event_bus.PcEvents
-import ua.com.radiokot.pc.logic.event_bus.events.BookAddedEvent
-import ua.com.radiokot.pc.logic.event_bus.events.BookDeletedEvent
-import ua.com.radiokot.pc.logic.event_bus.events.TwitterBookChangedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.*
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 import ua.com.radiokot.pc.logic.model.containers.BookIdContainer
@@ -79,7 +77,31 @@ class BooksRepository : SimpleMultipleItemsRepository<Book>() {
                 }
     }
 
-    fun updateBookQuotesCount(bookId: Long, quotesCount: Int) {
+    override fun handleEvent(event: PcEvent) {
+        super.handleEvent(event)
+        when (event) {
+            is BookQuotesUpdatedEvent ->
+                updateBookQuotesCount(event.bookId, event.quotes.size)
+            is QuoteAddedEvent -> {
+                itemsCache.find { it.id == event.quote.bookId }
+                        ?.let {
+                            updateBookQuotesCount(it.id ?: -1,
+                                    (it.quotesCount ?: 0) + 1)
+                            broadcast()
+                        }
+            }
+            is QuoteDeletedEvent -> {
+                itemsCache.find { it.id == event.bookId }
+                        ?.let {
+                            updateBookQuotesCount(it.id ?: -1,
+                                    (it.quotesCount ?: 1) - 1)
+                            broadcast()
+                        }
+            }
+        }
+    }
+
+    private fun updateBookQuotesCount(bookId: Long, quotesCount: Int) {
         val updatingBook = itemsCache.find { it.id == bookId }
 
         if (updatingBook != null && updatingBook.quotesCount != quotesCount) {

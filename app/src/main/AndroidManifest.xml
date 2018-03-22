@@ -32,6 +32,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".activities.add_book.AddBookActivity" />
         <activity android:name=".activities.quotes.QuotesActivity" />
+        <activity android:name=".activities.EditQuoteActivity" />
     </application>
 
 </manifest>

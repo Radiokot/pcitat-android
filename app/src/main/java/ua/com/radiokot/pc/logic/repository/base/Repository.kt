@@ -3,6 +3,7 @@ package ua.com.radiokot.pc.logic.repository.base
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
 
 /**
  * Contains common repository logic. Is a parent of all repositories.
@@ -43,4 +44,6 @@ abstract class Repository {
             }
         }
     }
+
+    open fun handleEvent(event: PcEvent) {}
 }

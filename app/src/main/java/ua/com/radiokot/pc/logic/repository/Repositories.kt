@@ -4,7 +4,6 @@ import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.event_bus.PcEvents
 import ua.com.radiokot.pc.logic.event_bus.events.BookDeletedEvent
-import ua.com.radiokot.pc.logic.event_bus.events.BookQuotesUpdatedEvent
 
 /**
  * Manages repositories instances.
@@ -19,12 +18,12 @@ object Repositories {
             when (event) {
                 is BookDeletedEvent -> {
                     App.state.quotesByBookRepositoriesByBook.remove(event.bookId)
-                    quotes().deleteFromBookLocally(event.bookId)
-                }
-                is BookQuotesUpdatedEvent -> {
-                    books().updateBookQuotesCount(event.bookId, event.quotes.size)
                 }
             }
+
+            quotes().handleEvent(event)
+            books().handleEvent(event)
+            user().handleEvent(event)
         }
     }
 
@@ -43,7 +42,7 @@ object Repositories {
                 ?: QuotesRepository().also { App.state.quotesRepository = it }
     }
 
-    fun quotes(bookId: Long): QuotesRepository {
+    fun quotes(bookId: Long): QuotesByBookRepository {
         return App.state.quotesByBookRepositoriesByBook.get(bookId)
     }
 }

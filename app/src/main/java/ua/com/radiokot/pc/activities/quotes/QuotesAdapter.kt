@@ -8,7 +8,7 @@ import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.view.adapter.BaseRecyclerAdapter
 
-class QuotesAdapter : BaseRecyclerAdapter<Quote, QuoteViewHolder>() {
+class QuotesAdapter : BaseRecyclerAdapter<QuoteListItem, QuoteViewHolder>() {
     var needBookTitles = false
 
     override fun createItemViewHolder(parent: ViewGroup?): QuoteViewHolder {
@@ -17,7 +17,7 @@ class QuotesAdapter : BaseRecyclerAdapter<Quote, QuoteViewHolder>() {
         return QuoteViewHolder(view, needBookTitles)
     }
 
-    override fun getDiffCallback(newItems: List<Quote>): DiffUtil.Callback? {
+    override fun getDiffCallback(newItems: List<QuoteListItem>): DiffUtil.Callback? {
         return object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return items[oldItemPosition].id == newItems[newItemPosition].id

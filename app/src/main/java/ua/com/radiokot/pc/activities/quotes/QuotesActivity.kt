@@ -20,19 +20,24 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_quotes.*
 import kotlinx.android.synthetic.main.default_toolbar.*
+import kotlinx.android.synthetic.main.include_appbar_elevation.*
 import kotlinx.android.synthetic.main.include_error_empty_view.*
 import kotlinx.android.synthetic.main.layout_progress.*
 import kotlinx.android.synthetic.main.quotes_book_appbar.*
+import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
+import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.logic.repository.BooksRepository
-import ua.com.radiokot.pc.logic.repository.QuotesRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
+import ua.com.radiokot.pc.logic.repository.base.MultipleItemsRepository
+import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.ToastManager
 import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.util.extensions.getStringExtra
 import ua.com.radiokot.pc.view.dialog.ConfirmationDialog
+import ua.com.radiokot.pc.view.util.AnimationUtil
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
 import ua.com.radiokot.pc.view.util.TypefaceUtil
 
@@ -40,10 +45,10 @@ class QuotesActivity : NavigationActivity() {
     companion object {
         val UPDATE_BOOK_REQUEST = "update_book".hashCode() and 0xffff
 
-        val BOOK_ID_EXTRA = "book_id"
-        val BOOK_TITLE_EXTRA = "book_title"
-        val BOOK_AUTHOR_EXTRA = "book_author"
-        val BOOK_IS_TWITTER_EXTRA = "book_is_twitter"
+        const val BOOK_ID_EXTRA = "book_id"
+        const val BOOK_TITLE_EXTRA = "book_title"
+        const val BOOK_AUTHOR_EXTRA = "book_author"
+        const val BOOK_IS_TWITTER_EXTRA = "book_is_twitter"
     }
 
     private val bookId: Long
@@ -62,7 +67,7 @@ class QuotesActivity : NavigationActivity() {
             updateTwitterIndicator()
         }
 
-    private val quotesRepository: QuotesRepository
+    private val quotesRepository: MultipleItemsRepository<Quote>
         get() =
             if (withBook)
                 Repositories.quotes(bookId)
@@ -113,6 +118,9 @@ class QuotesActivity : NavigationActivity() {
                 collapsing_toolbar.setExpandedTitleTypeface(it)
             }
 
+            collapsing_appbar.targetElevation = 0f
+            appbar_elevation_view.visibility = View.VISIBLE
+
             book_author_text_view.typeface = TypefaceUtil.getRobotoSlabRegular()
         }
     }
@@ -143,6 +151,10 @@ class QuotesActivity : NavigationActivity() {
             add_fab.isEnabled = false
         } else {
             quotes_list.addOnScrollListener(HideFabOnScrollListener(add_fab))
+
+            add_fab.onClick {
+                Navigator.openAddQuoteActivity(this, bookId)
+            }
         }
     }
 
@@ -176,6 +188,7 @@ class QuotesActivity : NavigationActivity() {
                             0, 0)
                 }
             }
+            AnimationUtil.fadeInView(book_author_text_view)
         }
     }
 
@@ -189,8 +202,14 @@ class QuotesActivity : NavigationActivity() {
         error_empty_view.observeAdapter(quotesAdapter, R.string.quotes_empty)
         error_empty_view.setEmptyViewDenial { quotesRepository.isNeverUpdated }
 
-        quotesAdapter.needBookTitles = !withBook
-        quotesAdapter.setData(listOf())
+        quotesAdapter.apply {
+            needBookTitles = !withBook
+            setData(listOf())
+            onItemClick { _, item ->
+                Navigator.openEditQuoteActivity(this@QuotesActivity, item.bookId,
+                        item.id, item.text)
+            }
+        }
 
         subscribeToQuotes()
     }
@@ -258,7 +277,7 @@ class QuotesActivity : NavigationActivity() {
 
     private fun displayQuotes() {
         val quotes = quotesRepository.itemsSubject.value
-        quotesAdapter.setData(quotes)
+        quotesAdapter.setData(quotes.map { QuoteListItem(it) })
     }
 
     // region Twitter export
@@ -301,7 +320,7 @@ class QuotesActivity : NavigationActivity() {
                 }
     }
 
-    var deleteProgressDialog: ProgressDialog? = null
+    private var deleteProgressDialog: ProgressDialog? = null
     private fun displayDeleteBookProgress(cancelListener: DialogInterface.OnCancelListener? = null) {
         hideDeleteBookProgress()
         deleteProgressDialog = ProgressDialog.show(this, null,

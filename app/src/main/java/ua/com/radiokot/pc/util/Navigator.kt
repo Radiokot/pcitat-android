@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.view.View
 import org.jetbrains.anko.intentFor
 import ua.com.radiokot.pc.R
+import ua.com.radiokot.pc.activities.EditQuoteActivity
 import ua.com.radiokot.pc.activities.LoginActivity
 import ua.com.radiokot.pc.activities.add_book.AddBookActivity
 import ua.com.radiokot.pc.activities.books.BooksActivity
@@ -66,5 +67,22 @@ object Navigator {
                 QuotesActivity.BOOK_AUTHOR_EXTRA to bookAuthor,
                 QuotesActivity.BOOK_IS_TWITTER_EXTRA to isTwitterBook
         ), QuotesActivity.UPDATE_BOOK_REQUEST)
+    }
+
+    fun openAddQuoteActivity(activity: Activity, bookId: Long?) {
+        activity.startActivityForResult(activity.intentFor<EditQuoteActivity>(
+                EditQuoteActivity.IS_ADDING_EXTRA to true,
+                EditQuoteActivity.BOOK_ID_EXTRA to bookId
+        ), EditQuoteActivity.EDIT_QUOTE_REQUEST)
+    }
+
+    fun openEditQuoteActivity(activity: Activity, bookId: Long?,
+                              quoteId: Long?, quoteText: String?) {
+        activity.startActivityForResult(activity.intentFor<EditQuoteActivity>(
+                EditQuoteActivity.IS_ADDING_EXTRA to false,
+                EditQuoteActivity.BOOK_ID_EXTRA to bookId,
+                EditQuoteActivity.QUOTE_ID_EXTRA to quoteId,
+                EditQuoteActivity.QUOTE_TEXT_EXTRA to quoteText
+        ), EditQuoteActivity.EDIT_QUOTE_REQUEST)
     }
 }

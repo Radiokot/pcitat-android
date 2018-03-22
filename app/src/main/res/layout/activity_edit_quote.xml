@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context="ua.com.radiokot.pc.activities.EditQuoteActivity">
+
+    <include layout="@layout/default_appbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/standard_margin"
+        android:paddingTop="@dimen/standard_margin">
+
+        <EditText
+            android:id="@+id/quote_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="@string/input_text_hint"
+            android:inputType="textCapSentences|textMultiLine"
+            android:paddingBottom="0dp"
+            android:maxLength="5000"
+            android:paddingEnd="@dimen/standard_margin"
+            android:paddingStart="@dimen/standard_margin"
+            android:paddingTop="0dp" />
+    </ScrollView>
+
+    <include layout="@layout/include_appbar_elevation" />
+
+</android.support.design.widget.CoordinatorLayout>

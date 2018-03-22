@@ -13,5 +13,13 @@ class Quote(
         @SerializedName("bookTitle")
         val bookTitle: String? = null,
         @SerializedName("text")
-        val text: String? = null
-)
+        var text: String? = null
+) {
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: super.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return id?.equals((other as? Quote)?.id) ?: super.equals(other)
+    }
+}

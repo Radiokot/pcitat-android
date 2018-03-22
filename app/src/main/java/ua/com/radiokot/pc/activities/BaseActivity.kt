@@ -42,8 +42,8 @@ abstract class BaseActivity : RxAppCompatActivity() {
         getToolbarTitleTextView()?.typeface = TypefaceUtil.getCondensedBold()
     }
 
-    protected fun initToolbar(titleResId: Int? = null, needUpButton: Boolean = true) =
-            initToolbar(if (titleResId != null) getString(titleResId) else null, needUpButton)
+    protected fun initToolbar(titleResId: Int = 0, needUpButton: Boolean = true) =
+            initToolbar(if (titleResId != 0) getString(titleResId) else null, needUpButton)
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {

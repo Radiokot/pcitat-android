@@ -13,6 +13,6 @@ class AppState(
         var userRepository: UserRepository? = null,
         var booksRepository: BooksRepository? = null,
         var quotesRepository: QuotesRepository? = null,
-        val quotesByBookRepositoriesByBook: LruCache<Long, QuotesRepository> =
+        val quotesByBookRepositoriesByBook: LruCache<Long, QuotesByBookRepository> =
         ua.com.radiokot.pc.util.LruCache(10) { QuotesByBookRepository(it) }
 )

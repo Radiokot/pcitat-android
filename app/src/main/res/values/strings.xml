@@ -38,4 +38,12 @@
     <string name="delete_book_name_confirmation">Удалить книгу «%1$s» и все цитаты из нее?</string>
     <string name="book_deleting_progress">Удаление книги…</string>
     <string name="book_deleted">Книга удалена</string>
+    <string name="add_quote_title">Добавить цитату</string>
+    <string name="save_action">Сохранить</string>
+    <string name="input_text_hint">Введите текст</string>
+    <string name="delete_quote_confirmation">Удалить эту цитату?</string>
+    <string name="quote_saving_progress">Сохранение цитаты…</string>
+    <string name="quote_saved">Цитата сохранена</string>
+    <string name="quote_deleting_progress">Удаление цитаты…</string>
+    <string name="quote_deleted">Цитата удалена</string>
 </resources>

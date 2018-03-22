@@ -13,14 +13,14 @@ import ua.com.radiokot.pc.view.adapter.BaseViewHolder
 import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 class QuoteViewHolder(view: View,
-                      private val needBookTitles: Boolean) : BaseViewHolder<Quote>(view) {
+                      private val needBookTitles: Boolean) : BaseViewHolder<QuoteListItem>(view) {
     private val quoteTextView = view.find<TextView>(R.id.quote_text_view)
     private val quoteBookTextView = view.find<TextView>(R.id.quote_book_text_view)
 
     private val context = view.context
     private val accentColor = ContextCompat.getColor(view.context, R.color.accent)
 
-    override fun bind(item: Quote) {
+    override fun bind(item: QuoteListItem) {
         TypefaceUtil.getRobotoSlabRegular().let {
             quoteTextView.typeface = it
             quoteBookTextView.typeface = it

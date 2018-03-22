@@ -1,9 +1,6 @@
 package ua.com.radiokot.pc.logic.db.dao
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import io.reactivex.Single
 import ua.com.radiokot.pc.logic.db.entities.QuoteEntity
 
@@ -26,4 +23,10 @@ interface QuoteDao {
 
     @Query("DELETE FROM quote WHERE book_id = :bookId")
     fun deleteFromBook(bookId: Long)
+
+    @Update()
+    fun update(vararg quotes: QuoteEntity)
+
+    @Delete()
+    fun delete(vararg quotes: QuoteEntity)
 }

@@ -6,6 +6,7 @@ import org.jetbrains.anko.doAsync
 import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.db.entities.QuoteEntity
+import ua.com.radiokot.pc.logic.event_bus.events.*
 import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.logic.repository.base.SimpleMultipleItemsRepository
 import ua.com.radiokot.pc.util.extensions.doNotEmitEmptyList
@@ -48,7 +49,33 @@ open class QuotesRepository : SimpleMultipleItemsRepository<Quote>() {
         }
     }
 
-    fun deleteFromBookLocally(bookId: Long) {
+    override fun handleEvent(event: PcEvent) {
+        super.handleEvent(event)
+        when (event) {
+            is BookDeletedEvent ->
+                deleteFromBookLocally(event.bookId)
+            is QuoteAddedEvent -> {
+                if (!itemsCache.contains(event.quote)) {
+                    itemsCache.add(0, event.quote)
+                    broadcast()
+                }
+            }
+            is QuoteDeletedEvent -> {
+                if (itemsCache.removeAll { it.id == event.quoteId }) {
+                    broadcast()
+                }
+            }
+            is QuoteUpdatedEvent -> {
+                val index = itemsCache.indexOf(event.quote)
+                if (index >= 0) {
+                    itemsCache[index] = event.quote
+                    broadcast()
+                }
+            }
+        }
+    }
+
+    private fun deleteFromBookLocally(bookId: Long) {
         itemsCache.removeAll {
             it.bookId == bookId
         }
