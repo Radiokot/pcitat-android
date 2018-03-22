@@ -1,8 +1,11 @@
 package ua.com.radiokot.pc.activities
 
+import android.annotation.TargetApi
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.widget.ImageView
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
@@ -26,6 +29,7 @@ import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.view.dialog.ConfirmationDialog
 import ua.com.radiokot.pc.view.util.ReplaceDefaultAvatarTransformation
+
 
 /**
  * Root activity with navigation drawer.
@@ -100,6 +104,35 @@ abstract class NavigationActivity : BaseActivity() {
                 .withOnDrawerItemClickListener { _, _, item ->
                     return@withOnDrawerItemClickListener onNavigationItemSelected(item)
                 }
+                .withOnDrawerListener(object : Drawer.OnDrawerListener {
+                    // Disable light status bar when drawer is opened.
+                    override fun onDrawerSlide(drawerView: View?, slideOffset: Float) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            setLightStatusBarEnabled(slideOffset < 0.3)
+                        }
+                    }
+
+                    var enabledNow: Boolean = true
+                    @TargetApi(Build.VERSION_CODES.M)
+                    private fun setLightStatusBarEnabled(enabled: Boolean) {
+                        if (enabled == enabledNow) {
+                            return
+                        }
+
+                        val flags = window.decorView.systemUiVisibility
+                        window.decorView.systemUiVisibility =
+                                if (enabled)
+                                    flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                                else
+                                    flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+
+                        enabledNow = enabled
+                    }
+
+                    override fun onDrawerClosed(drawerView: View?) {}
+                    override fun onDrawerOpened(drawerView: View?) {}
+
+                })
                 .build()
 
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
@@ -115,7 +148,7 @@ abstract class NavigationActivity : BaseActivity() {
 
             override fun cancel(imageView: ImageView?) {
                 Picasso.with(this@NavigationActivity)
-                        .cancelRequest(imageView);
+                        .cancelRequest(imageView)
             }
         })
 
