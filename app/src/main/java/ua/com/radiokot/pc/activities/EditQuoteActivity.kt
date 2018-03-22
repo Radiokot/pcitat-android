@@ -12,6 +12,7 @@ import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_edit_quote.*
+import org.jetbrains.anko.share
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.repository.QuotesByBookRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
@@ -26,6 +27,7 @@ class EditQuoteActivity : BaseActivity() {
     companion object {
         const val IS_ADDING_EXTRA = "is_adding"
         const val BOOK_ID_EXTRA = "book_id"
+        const val BOOK_TITLE_EXTRA = "book_title"
         const val QUOTE_ID_EXTRA = "quote_id"
         const val QUOTE_TEXT_EXTRA = "quote_text"
 
@@ -36,6 +38,8 @@ class EditQuoteActivity : BaseActivity() {
         get() = intent.getBooleanExtra(IS_ADDING_EXTRA, true)
     private val bookId: Long
         get() = intent.getLongExtra(BOOK_ID_EXTRA, 0)
+    private val bookTitle: String
+        get() = intent.getStringExtra(BOOK_TITLE_EXTRA, "")
     private val quoteId: Long
         get() = intent.getLongExtra(QUOTE_ID_EXTRA, 0)
     private val quoteText: String
@@ -75,6 +79,7 @@ class EditQuoteActivity : BaseActivity() {
         menuInflater.inflate(R.menu.quote, menu)
         if (isAdding) {
             menu?.findItem(R.id.delete)?.isVisible = false
+            menu?.findItem(R.id.share)?.isVisible = false
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -84,6 +89,7 @@ class EditQuoteActivity : BaseActivity() {
         when (item?.itemId) {
             R.id.delete -> tryToDelete()
             R.id.save -> tryToSave()
+            R.id.share -> share()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -185,5 +191,14 @@ class EditQuoteActivity : BaseActivity() {
     private fun finishWithResult() {
         setResult(Activity.RESULT_OK)
         finish()
+    }
+
+    private fun share() {
+        var text = quoteText
+        if (bookTitle.isNotEmpty()) {
+            text += "\n" + getString(R.string.quote_book_title, bookTitle)
+        }
+
+        share(text, getString(R.string.app_name))
     }
 }

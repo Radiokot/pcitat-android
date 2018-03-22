@@ -207,7 +207,7 @@ class QuotesActivity : NavigationActivity() {
             setData(listOf())
             onItemClick { _, item ->
                 Navigator.openEditQuoteActivity(this@QuotesActivity, item.bookId,
-                        item.id, item.text)
+                        item.bookTitle, item.id, item.text)
             }
         }
 

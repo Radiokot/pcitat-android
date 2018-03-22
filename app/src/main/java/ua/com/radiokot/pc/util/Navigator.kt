@@ -76,11 +76,12 @@ object Navigator {
         ), EditQuoteActivity.EDIT_QUOTE_REQUEST)
     }
 
-    fun openEditQuoteActivity(activity: Activity, bookId: Long?,
+    fun openEditQuoteActivity(activity: Activity, bookId: Long?, bookTitle: String?,
                               quoteId: Long?, quoteText: String?) {
         activity.startActivityForResult(activity.intentFor<EditQuoteActivity>(
                 EditQuoteActivity.IS_ADDING_EXTRA to false,
                 EditQuoteActivity.BOOK_ID_EXTRA to bookId,
+                EditQuoteActivity.BOOK_TITLE_EXTRA to bookTitle,
                 EditQuoteActivity.QUOTE_ID_EXTRA to quoteId,
                 EditQuoteActivity.QUOTE_TEXT_EXTRA to quoteText
         ), EditQuoteActivity.EDIT_QUOTE_REQUEST)
