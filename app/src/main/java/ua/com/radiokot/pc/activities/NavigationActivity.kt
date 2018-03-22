@@ -1,5 +1,7 @@
 package ua.com.radiokot.pc.activities
 
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
 import com.mikepenz.materialdrawer.AccountHeader
@@ -11,6 +13,9 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.IProfile
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
+import com.mikepenz.materialdrawer.util.DrawerImageLoader
+import com.squareup.picasso.Picasso
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
@@ -20,6 +25,7 @@ import ua.com.radiokot.pc.logic.repository.Repositories
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.view.dialog.ConfirmationDialog
+import ua.com.radiokot.pc.view.util.ReplaceDefaultAvatarTransformation
 
 /**
  * Root activity with navigation drawer.
@@ -46,7 +52,7 @@ abstract class NavigationActivity : BaseActivity() {
                 .withProfiles(mutableListOf(
                         ProfileDrawerItem()
                                 .withIdentifier(PROFILE_NAVIGATION_ITEM)
-                                .withIcon(R.drawable.ic_launcher)
+                                .withIcon(R.drawable.default_profile_image)
                 ) as List<IProfile<Any>>)
                 .build()
         subscribeToUser(profileHeader)
@@ -96,6 +102,23 @@ abstract class NavigationActivity : BaseActivity() {
                 }
                 .build()
 
+        DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
+            override fun set(imageView: ImageView?, uri: Uri?,
+                             placeholder: Drawable?, tag: String?) {
+                Picasso.with(this@NavigationActivity)
+                        .load(uri)
+                        .placeholder(R.drawable.default_profile_image)
+                        .transform(ReplaceDefaultAvatarTransformation())
+                        .fit()
+                        .into(imageView)
+            }
+
+            override fun cancel(imageView: ImageView?) {
+                Picasso.with(this@NavigationActivity)
+                        .cancelRequest(imageView);
+            }
+        })
+
         overridePendingTransition(0, R.anim.activity_fade_out)
     }
 
@@ -110,9 +133,15 @@ abstract class NavigationActivity : BaseActivity() {
                     profileHeader.updateProfile(
                             ProfileDrawerItem()
                                     .withIdentifier(PROFILE_NAVIGATION_ITEM)
-                                    .withIcon(R.drawable.ic_launcher)
                                     .withName(it.name)
                                     .withEmail(it.email)
+                                    .apply {
+                                        if (it.avatarUrl != null) {
+                                            withIcon(it.avatarUrl)
+                                        } else {
+                                            withIcon(R.drawable.default_profile_image)
+                                        }
+                                    }
                     )
                 }
     }

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
  * Created by Oleg Koretsky on 2/20/18.
  */
 object ApiFactory {
-    val API_URL = "https://pc.radiokot.com.ua/api/"
+    val API_URL = "http://pc.radiokot.com.ua/api/"
     private val REQUEST_TIMEOUT = 20 * 1000
 
     private var userService: UserService? = null

@@ -23,4 +23,12 @@ class User(
             @SerializedName("book")
             var bookId: Long? = null
     )
+
+    /**
+     * User's avatar from Twitter if present.
+     */
+    val avatarUrl: String?
+        get() = twitterIntegration?.username?.let {
+            "https://avatars.io/twitter/$it/medium"
+        }
 }
