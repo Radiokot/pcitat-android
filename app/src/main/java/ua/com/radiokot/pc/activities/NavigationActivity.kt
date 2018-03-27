@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
@@ -140,7 +141,8 @@ abstract class NavigationActivity : BaseActivity() {
                              placeholder: Drawable?, tag: String?) {
                 Picasso.with(this@NavigationActivity)
                         .load(uri)
-                        .placeholder(R.drawable.default_profile_image)
+                        .placeholder(ContextCompat.getDrawable(this@NavigationActivity,
+                                R.drawable.default_profile_image))
                         .transform(ReplaceDefaultAvatarTransformation())
                         .fit()
                         .into(imageView)
