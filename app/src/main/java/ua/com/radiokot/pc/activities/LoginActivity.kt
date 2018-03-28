@@ -1,5 +1,7 @@
 package ua.com.radiokot.pc.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -15,11 +17,11 @@ import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.exceptions.NotFoundException
 import ua.com.radiokot.pc.logic.model.LoginData
-import ua.com.radiokot.pc.logic.repository.Repositories
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
 import ua.com.radiokot.pc.util.SoftInputUtil
 import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
+import ua.com.radiokot.pc.util.extensions.getStringExtra
 import ua.com.radiokot.pc.util.text_validators.hasError
 import ua.com.radiokot.pc.util.text_validators.setErrorAndFocus
 import ua.com.radiokot.pc.view.util.edittext.EditTextUtil
@@ -78,6 +80,10 @@ class LoginActivity : BaseActivity() {
         login_button.onClick {
             tryToLogIn()
         }
+
+        twitter_login_button.onClick {
+            Navigator.openTwitterOauthActivity(this, TwitterOauthActivity.Mode.LOGIN)
+        }
     }
     // endregion
 
@@ -105,7 +111,6 @@ class LoginActivity : BaseActivity() {
                 LoginData(email_edit_text.text.toString(), password_edit_text.text.toString())
 
         AuthManager.logIn(loginData)
-                .doOnNext { Repositories.user().set(it) }
                 .compose(ObservableTransformers.defaultSchedulers())
                 .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
                 .doOnSubscribe {
@@ -129,6 +134,20 @@ class LoginActivity : BaseActivity() {
                             updateLoginAvailability()
                         }
                 )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TwitterOauthActivity.OAUTH_REQUEST
+                && resultCode == Activity.RESULT_OK) {
+            val email = data?.getStringExtra(TwitterOauthActivity.EMAIL_RESULT_EXTRA, "")
+            val key = data?.getStringExtra(TwitterOauthActivity.KEY_RESULT_EXTRA, "")
+
+            if (email?.isEmpty() == false && key?.isEmpty() == false
+                    && AuthManager.logInWithKey(email, key)) {
+                onSuccessLogin()
+            }
+        }
     }
 
     private fun onSuccessLogin() {

@@ -9,6 +9,7 @@ import org.jetbrains.anko.intentFor
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.EditQuoteActivity
 import ua.com.radiokot.pc.activities.LoginActivity
+import ua.com.radiokot.pc.activities.TwitterOauthActivity
 import ua.com.radiokot.pc.activities.add_book.AddBookActivity
 import ua.com.radiokot.pc.activities.books.BooksActivity
 import ua.com.radiokot.pc.activities.quotes.QuotesActivity
@@ -85,5 +86,11 @@ object Navigator {
                 EditQuoteActivity.QUOTE_ID_EXTRA to quoteId,
                 EditQuoteActivity.QUOTE_TEXT_EXTRA to quoteText
         ), EditQuoteActivity.EDIT_QUOTE_REQUEST)
+    }
+
+    fun openTwitterOauthActivity(activity: Activity, mode: TwitterOauthActivity.Mode) {
+        activity.startActivityForResult(activity.intentFor<TwitterOauthActivity>(
+                TwitterOauthActivity.MODE_EXTRA to mode.toString()
+        ), TwitterOauthActivity.OAUTH_REQUEST)
     }
 }

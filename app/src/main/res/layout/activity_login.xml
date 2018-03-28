@@ -78,12 +78,22 @@
                     android:theme="@style/PrimaryButton.Overlay" />
 
                 <Button
-                    android:id="@+id/go_to_signup_button"
+                    android:id="@+id/twitter_login_button"
                     style="@style/SecondaryButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/standard_margin"
                     android:layout_toStartOf="@id/login_button"
+                    android:text="@string/twitter_login" />
+
+                <Button
+                    android:id="@+id/go_to_signup_button"
+                    style="@style/SecondaryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/login_button"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/standard_margin"
                     android:text="@string/signup" />
 
             </RelativeLayout>

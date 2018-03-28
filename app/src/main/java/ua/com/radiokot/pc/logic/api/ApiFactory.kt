@@ -28,7 +28,11 @@ import java.util.concurrent.TimeUnit
  * Created by Oleg Koretsky on 2/20/18.
  */
 object ApiFactory {
-    val API_URL = "http://pc.radiokot.com.ua/api/"
+    const val API_URL = "https://pc.radiokot.com.ua/api/"
+    val TWITTER_OAUTH_URL: String
+        get() = API_URL + "twitterOauth"
+    const val OAUTH_RESULT_URI = "pcitat://oauth_result"
+
     private val REQUEST_TIMEOUT = 20 * 1000
 
     private var userService: UserService? = null
@@ -107,32 +111,34 @@ object ApiFactory {
     // endregion
 
     fun getBaseHttpClient(): OkHttpClient {
-        val clientBuilder = OkHttpClient.Builder()
-                .readTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-                .connectTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+        synchronized(this) {
+            val clientBuilder = OkHttpClient.Builder()
+                    .readTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+                    .connectTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
 
-        val socketFactory = TLSSocketFactory()
-        if (Platform.get().trustManager(socketFactory) != null) {
-            clientBuilder.sslSocketFactory(socketFactory)
-        } else {
-            Log.e("ApiFactory", "Unable to use modern TLS socket factory")
-        }
-
-        clientBuilder
-                .addInterceptor(createLoggingInterceptor())
-                .addInterceptor(createHttpCodesWrappingInterceptor())
-
-        clientBuilder.cookieJar(getBaseCookieJar())
-
-        val simulateLongResponses = false
-        if (simulateLongResponses) {
-            clientBuilder.addInterceptor { chain ->
-                Thread.sleep(3000)
-                chain.proceed(chain.request())
+            val socketFactory = TLSSocketFactory()
+            if (Platform.get().trustManager(socketFactory) != null) {
+                clientBuilder.sslSocketFactory(socketFactory)
+            } else {
+                Log.e("ApiFactory", "Unable to use modern TLS socket factory")
             }
-        }
 
-        return clientBuilder.build()
+            clientBuilder
+                    .addInterceptor(createLoggingInterceptor())
+                    .addInterceptor(createHttpCodesWrappingInterceptor())
+
+            clientBuilder.cookieJar(getBaseCookieJar())
+
+            val simulateLongResponses = false
+            if (simulateLongResponses) {
+                clientBuilder.addInterceptor { chain ->
+                    Thread.sleep(3000)
+                    chain.proceed(chain.request())
+                }
+            }
+
+            return clientBuilder.build()
+        }
     }
 
     fun getBaseGson(): Gson {
