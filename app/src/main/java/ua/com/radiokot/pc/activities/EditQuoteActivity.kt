@@ -70,7 +70,8 @@ class EditQuoteActivity : BaseActivity() {
 
             setText(quoteText)
             if (quoteText.isNotEmpty()) {
-                setSelection(quoteText.length, quoteText.length)
+                //setSelection(quoteText.length, quoteText.length)
+                focus_grabber.requestFocus()
             }
         }
     }

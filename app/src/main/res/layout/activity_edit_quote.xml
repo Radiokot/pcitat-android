@@ -24,12 +24,19 @@
             android:gravity="top"
             android:hint="@string/input_text_hint"
             android:inputType="textCapSentences|textMultiLine"
-            android:paddingBottom="0dp"
             android:maxLength="5000"
+            android:paddingBottom="0dp"
             android:paddingEnd="@dimen/standard_margin"
             android:paddingStart="@dimen/standard_margin"
             android:paddingTop="0dp" />
     </ScrollView>
+
+    <View
+        android:id="@+id/focus_grabber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
 
     <include layout="@layout/include_appbar_elevation" />
 
