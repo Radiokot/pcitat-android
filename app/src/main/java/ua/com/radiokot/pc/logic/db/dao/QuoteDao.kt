@@ -29,4 +29,7 @@ interface QuoteDao {
 
     @Delete()
     fun delete(vararg quotes: QuoteEntity)
+
+    @Query("DELETE FROM quote")
+    fun deleteAll()
 }

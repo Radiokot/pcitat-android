@@ -7,29 +7,22 @@ import io.reactivex.subjects.BehaviorSubject
  * Repository that holds a list of [T] items.
  */
 abstract class MultipleItemsRepository<T> : Repository() {
-    protected val itemsCache = mutableListOf<T>()
+    protected abstract val itemsCache: RepositoryCache<T>
 
     val itemsSubject: BehaviorSubject<List<T>> =
             BehaviorSubject.createDefault<List<T>>(listOf())
 
     protected open fun broadcast() {
-        itemsSubject.onNext(itemsCache.toList())
+        itemsSubject.onNext(itemsCache.items)
     }
 
-    abstract protected fun getItems(): Observable<List<T>>
-
-    protected open fun getStoredItems(): Observable<List<T>> {
-        return Observable.empty()
-    }
-
-    protected open fun storeItems(items: List<T>) {}
+    protected abstract fun getItems(): Observable<List<T>>
 
     protected open fun onNewItems(newItems: List<T>) {
         isNeverUpdated = false
         isFresh = true
 
-        itemsCache.clear()
-        itemsCache.addAll(newItems)
+        itemsCache.merge(newItems)
 
         broadcast()
     }

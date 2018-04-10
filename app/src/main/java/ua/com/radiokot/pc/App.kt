@@ -29,7 +29,7 @@ class App : Application() {
         val instance: App
             get() = mInstance
 
-        var state: AppState = AppState()
+        lateinit var state: AppState
             private set
 
         fun clearState() {
@@ -50,6 +50,7 @@ class App : Application() {
         super.onCreate()
 
         mInstance = this
+        clearState()
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 

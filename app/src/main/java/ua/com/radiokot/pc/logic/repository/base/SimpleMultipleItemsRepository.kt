@@ -1,5 +1,6 @@
 package ua.com.radiokot.pc.logic.repository.base
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -23,17 +24,14 @@ abstract class SimpleMultipleItemsRepository<T> : MultipleItemsRepository<T>() {
 
             isLoading = true
 
-            val storedItemsObservable =
-                    if (isNeverUpdated) getStoredItems() else Observable.empty()
+            val loadItemsFromDb =
+                    if (isNeverUpdated)
+                        itemsCache.loadFromDb().doOnComplete { broadcast() }
+                    else
+                        Completable.complete()
 
             updateDisposable?.dispose()
-            updateDisposable = storedItemsObservable.concatWith(
-                    getItems()
-                            .map {
-                                storeItems(it)
-                                it
-                            }
-            )
+            updateDisposable = loadItemsFromDb.andThen(getItems())
                     .subscribeBy(
                             onNext = { items ->
                                 onNewItems(items)

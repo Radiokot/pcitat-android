@@ -2,57 +2,28 @@ package ua.com.radiokot.pc.logic.repository
 
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.doAsync
+import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.api.ApiFactory
-import ua.com.radiokot.pc.logic.db.DbFactory
-import ua.com.radiokot.pc.logic.db.entities.QuoteEntity
 import ua.com.radiokot.pc.logic.event_bus.PcEvents
 import ua.com.radiokot.pc.logic.event_bus.events.BookQuotesUpdatedEvent
 import ua.com.radiokot.pc.logic.event_bus.events.QuoteAddedEvent
 import ua.com.radiokot.pc.logic.event_bus.events.QuoteDeletedEvent
 import ua.com.radiokot.pc.logic.event_bus.events.QuoteUpdatedEvent
 import ua.com.radiokot.pc.logic.model.Quote
+import ua.com.radiokot.pc.logic.repository.base.RepositoryCache
 import ua.com.radiokot.pc.logic.repository.base.SimpleMultipleItemsRepository
-import ua.com.radiokot.pc.util.extensions.doNotEmitEmptyList
 
 /**
  * Holds quotes from a certain book.
  */
 class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepository<Quote>() {
+    private val quotesCache = App.state.quotesCache
+    override val itemsCache: RepositoryCache<Quote>
+        get() = quotesCache
+
     override fun getItems(): Observable<List<Quote>> {
         return ApiFactory.getQuotesService().getByBookId(bookId)
                 .map { it.data.items }
-                .doOnNext {
-                    PcEvents.publish(BookQuotesUpdatedEvent(bookId, it))
-                }
-    }
-
-    override fun getStoredItems(): Observable<List<Quote>> {
-        return DbFactory.getAppDatabase().quoteDao.getByBookId(bookId)
-                .subscribeOn(Schedulers.io())
-                .map { it.map { it.toQuote() } }
-                .toObservable()
-                .doNotEmitEmptyList()
-    }
-
-    override fun storeItems(items: List<Quote>) {
-        doAsync {
-            DbFactory.getAppDatabase().quoteDao.apply {
-                insert(*items
-                        .map {
-                            QuoteEntity.fromQuote(it)
-                        }
-                        .toTypedArray()
-                )
-
-                leaveOnlyIdsForBook(bookId, items
-                        .map {
-                            it.id
-                        }
-                )
-            }
-        }
     }
 
     fun add(text: String): Observable<Quote> {
@@ -64,12 +35,8 @@ class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepo
                 .add(bookId, newQuote)
                 .map { it.data }
                 .doOnNext {
-                    if (!itemsCache.contains(it)) {
-                        itemsCache.add(0, it)
-                        storeSingleQuote(it)
-                        broadcast()
-                    }
-
+                    quotesCache.add(it)
+                    broadcast()
                     PcEvents.publish(QuoteAddedEvent(it))
                 }
     }
@@ -78,14 +45,13 @@ class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepo
         return ApiFactory.getQuotesService()
                 .update(id, Quote(text = text))
                 .map { it.data }
-                .doOnComplete {
-                    itemsCache
+                .doOnNext {
+                    quotesCache.items
                             .find { it.id == id }
                             ?.let {
                                 it.text = text
+                                quotesCache.update(it)
                                 broadcast()
-                                updateQuotes(it)
-
                                 PcEvents.publish(QuoteUpdatedEvent(it))
                             }
                 }
@@ -95,44 +61,24 @@ class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepo
         return ApiFactory.getQuotesService()
                 .delete(id)
                 .doOnComplete {
-                    val deletingQuote = itemsCache.find { it.id == id }
-                    itemsCache.remove(deletingQuote)
+                    quotesCache.deleteById(id)
                     broadcast()
-                    deleteQuotes(deletingQuote)
-
                     PcEvents.publish(QuoteDeletedEvent(id, bookId))
                 }
     }
 
-    private fun storeSingleQuote(quote: Quote) {
-        doAsync {
-            DbFactory.getAppDatabase().quoteDao.insert(QuoteEntity.fromQuote(quote))
-        }
+    override fun onNewItems(newItems: List<Quote>) {
+        isNeverUpdated = false
+        isFresh = true
+
+        quotesCache.mergeForBook(bookId, newItems)
+
+        broadcast()
+
+        PcEvents.publish(BookQuotesUpdatedEvent(bookId, newItems))
     }
 
-    private fun updateQuotes(vararg quotes: Quote?) {
-        doAsync {
-            DbFactory.getAppDatabase().quoteDao.update(
-                    *quotes
-                            .filterNotNull()
-                            .map {
-                                QuoteEntity.fromQuote(it)
-                            }
-                            .toTypedArray()
-            )
-        }
-    }
-
-    private fun deleteQuotes(vararg quotes: Quote?) {
-        doAsync {
-            DbFactory.getAppDatabase().quoteDao.delete(
-                    *quotes
-                            .filterNotNull()
-                            .map {
-                                QuoteEntity.fromQuote(it)
-                            }
-                            .toTypedArray()
-            )
-        }
+    override fun broadcast() {
+        itemsSubject.onNext(quotesCache.items.filter { it.bookId == bookId })
     }
 }

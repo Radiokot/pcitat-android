@@ -20,12 +20,18 @@ class Book(
         var quotesCount: Int? = null,
         @SerializedName("twitterBook")
         var isTwitterBook: Boolean? = null
-) {
+) : Comparable<Book> {
     override fun hashCode(): Int {
         return id?.hashCode() ?: super.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
         return id?.equals((other as? Book)?.id) ?: super.equals(other)
+    }
+
+    override fun compareTo(other: Book): Int {
+        return if (this.pagingToken != null && other.pagingToken != null)
+            other.pagingToken.compareTo(this.pagingToken)
+        else 0
     }
 }

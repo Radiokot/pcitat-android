@@ -14,12 +14,17 @@ class Quote(
         val bookTitle: String? = null,
         @SerializedName("text")
         var text: String? = null
-) {
+) : Comparable<Quote> {
     override fun hashCode(): Int {
         return id?.hashCode() ?: super.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
         return id?.equals((other as? Quote)?.id) ?: super.equals(other)
+    }
+
+    override fun compareTo(other: Quote): Int {
+        return if (this.id != null && other.id != null) other.id.compareTo(this.id)
+        else 0
     }
 }

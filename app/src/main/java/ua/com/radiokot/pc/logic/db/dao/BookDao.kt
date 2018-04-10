@@ -20,4 +20,7 @@ interface BookDao {
 
     @Delete()
     fun delete(vararg books: BookEntity)
+
+    @Query("DELETE FROM book")
+    fun deleteAll()
 }
