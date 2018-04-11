@@ -147,8 +147,11 @@ object ApiFactory {
         return builder.create()
     }
 
+    private var cookieJar: PersistentCookieJar? = null
     fun getBaseCookieJar(): PersistentCookieJar {
-        return PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(App.instance))
+        return cookieJar ?:
+            PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(App.instance))
+                    .also { cookieJar = it }
     }
     // endregion
 }
