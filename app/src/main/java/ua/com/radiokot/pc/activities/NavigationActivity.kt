@@ -187,6 +187,7 @@ abstract class NavigationActivity : BaseActivity() {
             getNavigationItemId() -> return false
             BOOKS_NAVIGATION_ITEM -> Navigator.toMainActivity(this)
             QUOTES_NAVIGATION_ITEM -> Navigator.toQuotesActivity(this)
+            PROFILE_NAVIGATION_ITEM -> Navigator.toProfileInfoActivity(this)
             LOGOUT_NAVIGATION_ITEM ->
                 ConfirmationDialog(this).show(getString(R.string.logout_confirmation)) {
                     AuthManager.logOut()

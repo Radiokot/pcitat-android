@@ -14,7 +14,10 @@ import kotlinx.android.synthetic.main.activity_twitter_oauth.*
 import kotlinx.android.synthetic.main.layout_progress.*
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.api.ApiFactory
+import ua.com.radiokot.pc.logic.model.User
+import ua.com.radiokot.pc.logic.repository.Repositories
 import ua.com.radiokot.pc.util.extensions.getStringExtra
+import ua.com.radiokot.pc.util.extensions.sha256
 
 class TwitterOauthActivity : BaseActivity() {
     enum class Mode {
@@ -34,11 +37,22 @@ class TwitterOauthActivity : BaseActivity() {
         private const val OAUTH_KEY_KEY = "key"
     }
 
+    private val user: User?
+        get() {
+            val repository = Repositories.user()
+            return if (repository.itemSubject.hasValue())
+                repository.itemSubject.value
+            else
+                null
+        }
+
     private val mode: Mode
         get() = Mode.valueOf(intent.getStringExtra(MODE_EXTRA, Mode.LOGIN.toString()))
     private val modeUrl: String
         get() = "${ApiFactory.TWITTER_OAUTH_URL
-        }?action=${mode.toString().toLowerCase()}&redirect=${ApiFactory.OAUTH_RESULT_URI}"
+        }?action=${mode.toString().toLowerCase()}&redirect=${ApiFactory.OAUTH_RESULT_URI}" +
+                "&request_key=${user?.authKey?.sha256()}" +
+                "&email=${user?.email}"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

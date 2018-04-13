@@ -48,4 +48,10 @@
     <string name="quote_deleted">Цитата удалена</string>
     <string name="share_action">Поделиться</string>
     <string name="twitter_login">Вход через Twitter</string>
+    <string name="profile_information">Информация</string>
+    <string name="twitter_export">Экспорт через Twitter</string>
+    <string name="user_name_hint">Имя</string>
+    <string name="twitter_nickname_hint">Учетная запись</string>
+    <string name="connect_twitter_account_action">Подключить учетную запись</string>
+    <string name="change_twitter_account_action">Изменить</string>
 </resources>

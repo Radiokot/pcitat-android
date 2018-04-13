@@ -14,6 +14,8 @@
     <dimen name="text_size_expanded_book_author">18sp</dimen>
     <dimen name="text_size_book_heading">16sp</dimen>
     <dimen name="text_size_quote_card">16sp</dimen>
+    <dimen name="text_size_info_content">16sp</dimen>
+    <dimen name="text_size_hint">12sp</dimen>
 
     <dimen name="login_signup_logo_size">128dp</dimen>
     <dimen name="card_elevation">2dp</dimen>

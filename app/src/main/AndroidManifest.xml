@@ -34,6 +34,7 @@
         <activity android:name=".activities.quotes.QuotesActivity" />
         <activity android:name=".activities.EditQuoteActivity" />
         <activity android:name=".activities.TwitterOauthActivity" />
+        <activity android:name=".activities.ProfileInfoActivity" />
     </application>
 
 </manifest>
