@@ -3,6 +3,7 @@ package ua.com.radiokot.pc.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.view.View
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
@@ -30,7 +31,7 @@ class ProfileInfoActivity : NavigationActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_info)
 
-        initToolbar(R.string.profile_settings, false)
+        initToolbar()
         initNavigation()
 
         initLabels()
@@ -39,6 +40,11 @@ class ProfileInfoActivity : NavigationActivity() {
     }
 
     override fun getNavigationItemId(): Long = PROFILE_NAVIGATION_ITEM
+
+    private fun initToolbar() {
+        initToolbar(R.string.profile_settings, false)
+        (getToolbar()?.layoutParams as? AppBarLayout.LayoutParams)?.scrollFlags = 0
+    }
 
     private fun initLabels() {
         listOf(user_name_text_view, email_text_view, twitter_nickname_text_view)

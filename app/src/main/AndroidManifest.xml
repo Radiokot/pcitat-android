@@ -19,7 +19,8 @@
 
         <activity
             android:name=".activities.books.BooksActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,11 +31,16 @@
             android:name=".activities.LoginActivity"
             android:configChanges="screenSize|orientation"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".activities.add_book.AddBookActivity" />
-        <activity android:name=".activities.quotes.QuotesActivity" />
-        <activity android:name=".activities.EditQuoteActivity" />
-        <activity android:name=".activities.TwitterOauthActivity" />
-        <activity android:name=".activities.ProfileInfoActivity" />
+        <activity android:name=".activities.add_book.AddBookActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".activities.quotes.QuotesActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".activities.EditQuoteActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".activities.TwitterOauthActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".activities.ProfileInfoActivity"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

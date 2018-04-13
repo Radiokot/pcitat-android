@@ -1,9 +1,11 @@
 package ua.com.radiokot.pc.activities.books
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.transition.Fade
 import android.support.transition.TransitionManager
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.SimpleItemAnimator
 import android.util.DisplayMetrics
@@ -83,6 +85,22 @@ class BooksActivity : NavigationActivity() {
     }
 
     private fun initBooksList() {
+        initBooksRecyclerView()
+
+        booksAdapter.onItemClick { _, book ->
+            Navigator.openQuotesActivity(this,
+                    book.id, book.title, book.authorName, book.isTwitterBook)
+        }
+
+        error_empty_view.observeAdapter(booksAdapter) {
+            getString(if (isOnSearch) R.string.not_found else R.string.books_empty)
+        }
+        error_empty_view.setEmptyViewDenial { booksRepository.isNeverUpdated }
+
+        subscribeToBooks()
+    }
+
+    private fun initBooksRecyclerView(reset: Boolean = false) {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val oneDpInPx = displayMetrics.density
@@ -96,27 +114,32 @@ class BooksActivity : NavigationActivity() {
         val bookCoverHeight = estimatedBookCoverWidth * BOOK_COVER_PROPORTION
         booksAdapter.coverHeight = bookCoverHeight.roundToInt()
 
-        booksAdapter.onItemClick { _, book ->
-            Navigator.openQuotesActivity(this,
-                    book.id, book.title, book.authorName, book.isTwitterBook)
+        var firstVisibleItem = 0
+
+        if (reset) {
+            firstVisibleItem =
+                    (books_list.layoutManager as? LinearLayoutManager)
+                            ?.findFirstVisibleItemPosition() ?: 0
+
+            books_list.adapter = null
+            books_list.layoutManager = null
         }
 
         books_list.apply {
-            layoutManager = GridLayoutManager(this@BooksActivity, spanCount)
             setHasFixedSize(true)
             setItemViewCacheSize(20)
             isDrawingCacheEnabled = true
             drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
             (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+
+            val gridLayoutManager = GridLayoutManager(this@BooksActivity, spanCount)
+            layoutManager = gridLayoutManager
             adapter = booksAdapter
-        }
 
-        error_empty_view.observeAdapter(booksAdapter) {
-            getString(if (isOnSearch) R.string.not_found else R.string.books_empty)
+            if (firstVisibleItem > 0) {
+                gridLayoutManager.scrollToPosition(firstVisibleItem)
+            }
         }
-        error_empty_view.setEmptyViewDenial { booksRepository.isNeverUpdated }
-
-        subscribeToBooks()
     }
 
     private var booksItemsDisposable: Disposable? = null
@@ -214,6 +237,11 @@ class BooksActivity : NavigationActivity() {
         return super.onCreateOptionsMenu(menu)
     }
     // endregion
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        initBooksRecyclerView(reset = true)
+    }
 
     private fun displayBooks() {
         val books = booksRepository.itemsSubject.value
