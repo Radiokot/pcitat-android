@@ -15,6 +15,7 @@ import ua.com.radiokot.pc.logic.AppState
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.util.Navigator
 import ua.com.radiokot.pc.util.ObservableTransformers
+import ua.com.radiokot.pc.util.shortcuts.AppShortcutsManager
 import java.io.File
 
 /**
@@ -113,6 +114,8 @@ class App : Application() {
                             Navigator.toLoginActivity(it)
                         }
                     }
+
+                    AppShortcutsManager.initShortcuts()
                 }
     }
 
