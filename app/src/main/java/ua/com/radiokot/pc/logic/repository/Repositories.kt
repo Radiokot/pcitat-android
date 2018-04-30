@@ -45,9 +45,4 @@ object Repositories {
     fun quotes(bookId: Long): QuotesByBookRepository {
         return App.state.quotesByBookRepositoriesByBook.get(bookId)
     }
-
-    private var sas: AdvancedQuotesRepository? = null
-    fun advancedQuotes(): AdvancedQuotesRepository {
-        return sas ?: AdvancedQuotesRepository().also { sas = it }
-    }
 }
