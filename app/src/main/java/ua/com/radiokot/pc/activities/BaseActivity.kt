@@ -14,9 +14,15 @@ import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 abstract class BaseActivity : RxAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        overridePendingTransition(0, R.anim.activity_fade_out)
         super.onCreate(savedInstanceState)
 
         subscribeToEvents()
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(0, R.anim.activity_fade_out)
     }
 
     // region Event bus

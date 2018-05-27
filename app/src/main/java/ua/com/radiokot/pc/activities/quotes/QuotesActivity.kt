@@ -93,36 +93,32 @@ class QuotesActivity : NavigationActivity() {
         update()
     }
 
-    override fun getToolbar(): Toolbar? {
-        return if (withBook) collapsing_inner_toolbar else toolbar
-    }
+    override fun getToolbar(): Toolbar? = if (withBook) collapsing_inner_toolbar else toolbar
 
     // region Init
-    private fun initToolbar() {
-        if (!withBook) {
-            appbar_view_stub.layoutResource = R.layout.default_appbar
-            appbar_view_stub.inflate()
+    private fun initToolbar() = if (!withBook) {
+        appbar_view_stub.layoutResource = R.layout.default_appbar
+        appbar_view_stub.inflate()
 
-            initToolbar(R.string.my_quotes, false)
-            initNavigation()
-        } else {
-            appbar_view_stub.layoutResource = R.layout.quotes_book_appbar
-            appbar_view_stub.inflate()
+        initToolbar(R.string.my_quotes, false)
+        initNavigation()
+    } else {
+        appbar_view_stub.layoutResource = R.layout.quotes_book_appbar
+        appbar_view_stub.inflate()
 
-            initToolbar(bookTitle)
-            collapsing_toolbar.title = bookTitle
-            book_author_text_view.text = bookAuthor
+        initToolbar(bookTitle)
+        collapsing_toolbar.title = bookTitle
+        book_author_text_view.text = bookAuthor
 
-            TypefaceUtil.getCondensedBold().let {
-                collapsing_toolbar.setCollapsedTitleTypeface(it)
-                collapsing_toolbar.setExpandedTitleTypeface(it)
-            }
-
-            collapsing_appbar.targetElevation = 0f
-            appbar_elevation_view.visibility = View.VISIBLE
-
-            book_author_text_view.typeface = TypefaceUtil.getRobotoSlabRegular()
+        TypefaceUtil.getCondensedBold().let {
+            collapsing_toolbar.setCollapsedTitleTypeface(it)
+            collapsing_toolbar.setExpandedTitleTypeface(it)
         }
+
+        collapsing_appbar.targetElevation = 0f
+        appbar_elevation_view.visibility = View.VISIBLE
+
+        book_author_text_view.typeface = TypefaceUtil.getRobotoSlabRegular()
     }
 
     private fun getExpandedTitleLinesCount(): Int? {

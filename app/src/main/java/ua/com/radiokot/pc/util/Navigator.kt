@@ -18,8 +18,8 @@ import ua.com.radiokot.pc.activities.quotes.QuotesActivity
 object Navigator {
     private fun fadeOut(activity: Activity) {
         ActivityCompat.finishAfterTransition(activity)
-        activity.overridePendingTransition(0, R.anim.activity_fade_out)
         activity.finish()
+        activity.overridePendingTransition(0, R.anim.activity_fade_out)
     }
 
     private fun createTransitionBundle(activity: Activity,
