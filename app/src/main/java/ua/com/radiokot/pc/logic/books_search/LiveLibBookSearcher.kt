@@ -2,6 +2,7 @@ package ua.com.radiokot.pc.logic.books_search
 
 import io.reactivex.Observable
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 import ua.com.radiokot.pc.logic.model.LiveLibSearchResult
@@ -30,15 +31,15 @@ class LiveLibBookSearcher : BookSearcher {
 
             val rows = resultHtml.select(".object-edition")
             rows.forEach { row ->
-                val linkElement = row.selectFirst(".title")
-                linkElement.setBaseUri(LIVELIB_ROOT_URL)
-                val authorElement = row.selectFirst(".description")
+                val linkElement: Element? = row.selectFirst(".title")
+                linkElement?.setBaseUri(LIVELIB_ROOT_URL)
+                val authorElement: Element? = row.selectFirst(".description")
 
-                val title = linkElement.text()
-                val author = authorElement.text()
-                val url = linkElement.absUrl("href")
+                val title = linkElement?.text()
+                val author = authorElement?.text()
+                val url = linkElement?.absUrl("href")
 
-                if (title.isNotEmpty() && author.isNotEmpty() && url.isNotEmpty()) {
+                if (!title.isNullOrEmpty() && !author.isNullOrEmpty() && !url.isNullOrEmpty()) {
                     books.add(ExternalSiteBook(title, author, url))
                 }
             }
