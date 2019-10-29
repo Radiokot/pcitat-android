@@ -4,5 +4,5 @@ import io.reactivex.Observable
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
 
 interface BookSearcher {
-    fun search(query: String): Observable<List<ExternalSiteBook>>
+    fun search(query: String): Observable<Collection<ExternalSiteBook>>
 }

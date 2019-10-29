@@ -133,7 +133,7 @@ class AddBookActivity : BaseActivity() {
         }
     }
 
-    private fun displayFoundBooks(suggestions: List<ExternalSiteBook>) {
+    private fun displayFoundBooks(suggestions: Collection<ExternalSiteBook>) {
         booksAdapter.setData(suggestions)
     }
 

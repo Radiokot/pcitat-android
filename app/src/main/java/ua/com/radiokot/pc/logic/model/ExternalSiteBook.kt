@@ -2,7 +2,7 @@ package ua.com.radiokot.pc.logic.model
 
 import com.google.gson.annotations.SerializedName
 
-class ExternalSiteBook(
+data class ExternalSiteBook(
         val title: String? = null,
         val authorName: String? = null,
         @SerializedName("url")

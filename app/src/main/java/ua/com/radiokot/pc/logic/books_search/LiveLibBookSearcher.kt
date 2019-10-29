@@ -14,16 +14,16 @@ class LiveLibBookSearcher : BookSearcher {
     companion object {
         private val LIVELIB_ROOT_URL = "https://www.livelib.ru/"
     }
-    override fun search(query: String): Observable<List<ExternalSiteBook>> {
+    override fun search(query: String): Observable<Collection<ExternalSiteBook>> {
         return ApiFactory.getLiveLibService()
                 .search(query)
                 .flatMap { parseLiveLibResponse(it) }
     }
 
     private fun parseLiveLibResponse(result: LiveLibSearchResult):
-            Observable<List<ExternalSiteBook>> {
+            Observable<Collection<ExternalSiteBook>> {
         return Observable.defer {
-            val books = mutableListOf<ExternalSiteBook>()
+            val books = mutableSetOf<ExternalSiteBook>()
 
             val resultHtmlString = result.contentHtml
                     ?: return@defer Observable.just(books)
@@ -37,7 +37,7 @@ class LiveLibBookSearcher : BookSearcher {
 
                 val title = linkElement?.text()
                 val author = authorElement?.text()
-                val url = linkElement?.absUrl("href")
+                val url = linkElement?.absUrl("href")?.substringBefore('?')
 
                 if (!title.isNullOrEmpty() && !author.isNullOrEmpty() && !url.isNullOrEmpty()) {
                     books.add(ExternalSiteBook(title, author, url))
