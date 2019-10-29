@@ -39,6 +39,7 @@ import ua.com.radiokot.pc.util.extensions.getStringExtra
 import ua.com.radiokot.pc.view.dialog.ConfirmationDialog
 import ua.com.radiokot.pc.view.util.AnimationUtil
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
+import ua.com.radiokot.pc.view.util.ScrollOnTopItemUpdateAdapterObserver
 import ua.com.radiokot.pc.view.util.TypefaceUtil
 
 class QuotesActivity : NavigationActivity() {
@@ -194,6 +195,8 @@ class QuotesActivity : NavigationActivity() {
             (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             adapter = quotesAdapter
         }
+
+        quotesAdapter.registerAdapterDataObserver(ScrollOnTopItemUpdateAdapterObserver(quotes_list))
 
         error_empty_view.observeAdapter(quotesAdapter, R.string.quotes_empty)
         error_empty_view.setEmptyViewDenial { quotesRepository.isNeverUpdated }

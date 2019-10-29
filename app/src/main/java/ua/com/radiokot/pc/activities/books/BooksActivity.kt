@@ -34,6 +34,7 @@ import ua.com.radiokot.pc.util.SearchUtil
 import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 import ua.com.radiokot.pc.view.util.HideFabOnScrollListener
 import ua.com.radiokot.pc.view.util.LoadingIndicatorManager
+import ua.com.radiokot.pc.view.util.ScrollOnTopItemUpdateAdapterObserver
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -140,6 +141,8 @@ class BooksActivity : NavigationActivity() {
                 gridLayoutManager.scrollToPosition(firstVisibleItem)
             }
         }
+
+        booksAdapter.registerAdapterDataObserver(ScrollOnTopItemUpdateAdapterObserver(books_list))
     }
 
     private var booksItemsDisposable: Disposable? = null
