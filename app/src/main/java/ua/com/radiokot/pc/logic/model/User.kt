@@ -29,6 +29,6 @@ class User(
      */
     val avatarUrl: String?
         get() = twitterIntegration?.username?.let {
-            "https://avatars.io/twitter/$it/medium"
+            "https://unavatar.now.sh/twitter/$it"
         }
 }
