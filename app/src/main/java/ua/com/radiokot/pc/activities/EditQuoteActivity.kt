@@ -3,6 +3,7 @@ package ua.com.radiokot.pc.activities
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -48,6 +49,10 @@ class EditQuoteActivity : BaseActivity() {
     private val quotesRepository: QuotesByBookRepository
         get() = Repositories.quotes(bookId)
 
+    private val lensIntent: Intent? by lazy {
+        packageManager.getLaunchIntentForPackage("com.google.ar.lens")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -82,6 +87,11 @@ class EditQuoteActivity : BaseActivity() {
             menu?.findItem(R.id.delete)?.isVisible = false
             menu?.findItem(R.id.share)?.isVisible = false
         }
+
+        if (!isAdding || lensIntent == null) {
+            menu?.findItem(R.id.scan_with_lens)?.isVisible = false
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
     // endregion
@@ -91,6 +101,7 @@ class EditQuoteActivity : BaseActivity() {
             R.id.delete -> tryToDelete()
             R.id.save -> tryToSave()
             R.id.share -> share()
+            R.id.scan_with_lens -> tryToOpenLens()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -201,5 +212,11 @@ class EditQuoteActivity : BaseActivity() {
         }
 
         share(text, getString(R.string.app_name))
+    }
+
+    private fun tryToOpenLens() {
+        if (lensIntent != null) {
+            startActivity(lensIntent)
+        }
     }
 }

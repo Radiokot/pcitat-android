@@ -7,6 +7,11 @@
         android:title="@string/save_action"
         app:showAsAction="always" />
     <item
+        android:id="@+id/scan_with_lens"
+        android:icon="@drawable/ic_scan_frame"
+        android:title="@string/scan_with_lens_action"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/share"
         android:icon="@drawable/ic_share"
         android:title="@string/share_action"
