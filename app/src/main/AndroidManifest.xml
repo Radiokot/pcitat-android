@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ua.com.radiokot.pc">
+          package="ua.com.radiokot.pc">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".App"
@@ -15,32 +15,47 @@
         android:theme="@style/AppTheme.NoActionBar">
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="${fabricApiKey}" />
+            android:value="${fabricApiKey}"/>
 
         <activity
             android:name=".activities.books.BooksActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.LoginActivity"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".activities.add_book.AddBookActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity android:name=".activities.quotes.QuotesActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".activities.add_book.AddBookActivity"
             android:configChanges="orientation|screenSize"/>
-        <activity android:name=".activities.EditQuoteActivity"
+        <activity
+            android:name=".activities.quotes.QuotesActivity"
             android:configChanges="orientation|screenSize"/>
-        <activity android:name=".activities.TwitterOauthActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity android:name=".activities.ProfileInfoActivity"
-            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activities.EditQuoteActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".activities.TwitterOauthActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".activities.ProfileInfoActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".activities.QuickAddQuoteActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/add_quote_title">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -54,4 +54,6 @@
     <string name="twitter_nickname_hint">Учетная запись</string>
     <string name="connect_twitter_account_action">Подключить учетную запись</string>
     <string name="change_twitter_account_action">Изменить</string>
+    <string name="add_quote_action">Добавить</string>
+    <string name="quote_text">Текст цитаты</string>
 </resources>
