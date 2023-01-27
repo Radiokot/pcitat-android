@@ -276,6 +276,8 @@ class QuotesActivity : NavigationActivity() {
 
     private fun displayQuotes() {
         val quotes = quotesRepository.itemsSubject.value
+            ?: return
+
         quotesAdapter.setData(quotes.map { QuoteListItem(it) })
     }
 

@@ -1,7 +1,7 @@
 package ua.com.radiokot.pc.logic.db
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import ua.com.radiokot.pc.logic.db.dao.BookDao
 import ua.com.radiokot.pc.logic.db.dao.QuoteDao
 import ua.com.radiokot.pc.logic.db.dao.UserDao

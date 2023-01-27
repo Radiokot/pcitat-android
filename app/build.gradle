@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -24,13 +23,12 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled = true
 
         manifestPlaceholders = [fabricApiKey: keystoreProperties['FabricApiKey']]
     }
     buildTypes {
         debug {
-            buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'false'
-
             signingConfig signingConfigs.debug
             debuggable true
 
@@ -38,14 +36,21 @@ android {
         }
 
         release {
-            buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
-
             signingConfig signingConfigs.debug
             debuggable false
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
@@ -56,7 +61,7 @@ ext {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -70,14 +75,11 @@ dependencies {
     compile "com.android.support:customtabs:${supportLibVersion}"
     compile "com.android.support:preference-v14:${supportLibVersion}"
     compile "com.android.support:transition:${supportLibVersion}"
+    compile 'com.android.support:multidex:1.0.3'
 
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
-
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
-        transitive = true
-    }
 
     compile('com.mikepenz:materialdrawer:5.9.0@aar') {
         transitive = true
@@ -93,9 +95,9 @@ dependencies {
     compile 'org.jsoup:jsoup:1.11.2'
     compile 'net.opacapp:multiline-collapsingtoolbar:1.6.0'
 
-    compile "android.arch.persistence.room:runtime:1.1.0-alpha3"
-    compile "android.arch.persistence.room:rxjava2:1.1.0-alpha3"
-    kapt "android.arch.persistence.room:compiler:1.1.0-alpha3"
+    runtimeOnly 'androidx.room:room-runtime:2.3.0'
+    compile 'androidx.room:room-rxjava2:2.3.0'
+    kapt 'androidx.room:room-compiler:2.3.0'
 
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
     compile "io.reactivex.rxjava2:rxjava:2.1.7"

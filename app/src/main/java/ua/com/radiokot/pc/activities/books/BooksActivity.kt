@@ -55,7 +55,7 @@ class BooksActivity : NavigationActivity() {
     private val whitespaceSeriesRegex = " +".toRegex()
     private val searchQuerySubject = BehaviorSubject.createDefault("")
     private val isOnSearch: Boolean
-        get() = !searchQuerySubject.value.isEmpty()
+        get() = !searchQuerySubject.value.isNullOrEmpty()
 
     override fun getNavigationItemId(): Long = BOOKS_NAVIGATION_ITEM
 
@@ -248,8 +248,9 @@ class BooksActivity : NavigationActivity() {
 
     private fun displayBooks() {
         val books = booksRepository.itemsSubject.value
+            ?: return
 
-        val searchQuery = searchQuerySubject.value
+        val searchQuery = searchQuerySubject.value ?: ""
         val searchPredicate: (Book) -> Boolean =
                 if (isOnSearch)
                     { book ->

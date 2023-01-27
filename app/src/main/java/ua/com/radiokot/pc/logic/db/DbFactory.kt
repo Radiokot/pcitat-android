@@ -1,6 +1,6 @@
 package ua.com.radiokot.pc.logic.db
 
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import ua.com.radiokot.pc.App
 
 object DbFactory {

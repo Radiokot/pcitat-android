@@ -7,15 +7,15 @@ import com.google.gson.annotations.SerializedName
  */
 class User(
         @SerializedName("id")
-        val id: Long? = null,
+        val id: Long,
         @SerializedName("email")
-        val email: String? = null,
+        val email: String,
         @SerializedName("name")
-        val name: String? = null,
+        val name: String,
         @SerializedName("twitter")
         val twitterIntegration: TwitterIntegration? = null,
         @SerializedName("key")
-        val authKey: String? = null
+        val authKey: String
 ) {
     class TwitterIntegration(
             @SerializedName("username")

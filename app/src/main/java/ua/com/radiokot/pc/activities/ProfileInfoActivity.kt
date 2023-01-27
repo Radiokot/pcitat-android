@@ -81,11 +81,12 @@ class ProfileInfoActivity : NavigationActivity() {
 
     private fun displayUserInfo() {
         val user = userRepository.itemSubject.value
+            ?: return
 
         user_name_text_view.text = user.name
         email_text_view.text = user.email
 
-        user?.twitterIntegration?.username.let { twitterNickname ->
+        user.twitterIntegration?.username.let { twitterNickname ->
             if (twitterNickname != null) {
                 twitter_info_layout.visibility = View.VISIBLE
                 twitter_auth_button.visibility = View.VISIBLE

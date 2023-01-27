@@ -1,16 +1,14 @@
 package ua.com.radiokot.pc
 
 import android.app.Activity
-import android.app.Application
 import android.os.Bundle
+import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.security.ProviderInstaller
 import com.jakewharton.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
-import io.fabric.sdk.android.Fabric
 import ua.com.radiokot.pc.logic.AppState
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.util.Navigator
@@ -21,7 +19,7 @@ import java.io.File
 /**
  * Created by Oleg Koretsky on 2/19/18.
  */
-class App : Application() {
+class App : MultiDexApplication() {
     companion object {
         private val IMAGE_CACHE_DIR_NAME = "images"
 
@@ -56,7 +54,6 @@ class App : Application() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         initTlsIfNeeded()
-        initCrashlytics()
         initLifecycleCallbacks()
         initPicasso()
 
@@ -71,16 +68,6 @@ class App : Application() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-    }
-
-    private fun initCrashlytics() {
-        if (BuildConfig.ENABLE_CRASHLYTICS) {
-            val fabricConfig = Fabric.Builder(this)
-                    .kits(Crashlytics())
-                    .debuggable(true)
-                    .build()
-            Fabric.with(fabricConfig)
         }
     }
 

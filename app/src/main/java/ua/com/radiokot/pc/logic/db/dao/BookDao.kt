@@ -1,6 +1,6 @@
 package ua.com.radiokot.pc.logic.db.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import io.reactivex.Single
 import ua.com.radiokot.pc.logic.db.entities.BookEntity
 
