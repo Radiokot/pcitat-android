@@ -21,7 +21,7 @@ class QuotesCache : RepositoryCache<Quote>() {
     }
 
     override fun isContentSame(first: Quote, second: Quote): Boolean {
-        return first.text == second.text
+        return first.text == second.text && first.isPublic == second.isPublic
     }
 
     override fun sortItems() {

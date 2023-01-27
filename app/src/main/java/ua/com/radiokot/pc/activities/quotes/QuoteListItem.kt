@@ -5,6 +5,6 @@ import ua.com.radiokot.pc.logic.model.Quote
 class QuoteListItem(quote: Quote) {
     val id = quote.id
     val text = quote.text
-    val bookId = quote.bookId
     val bookTitle = quote.bookTitle
+    val source: Quote = quote
 }

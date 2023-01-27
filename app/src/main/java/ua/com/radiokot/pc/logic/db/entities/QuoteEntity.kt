@@ -11,23 +11,25 @@ import ua.com.radiokot.pc.logic.model.Quote
 data class QuoteEntity(
         @PrimaryKey
         @ColumnInfo(name = "id")
-        var id: Long? = null,
+        var id: Long?,
         @ColumnInfo(name = "text")
-        var text: String? = null,
+        var text: String?,
+        @ColumnInfo(name = "is_public")
+        var isPublic: Boolean,
         @ColumnInfo(name = "book_id")
-        var bookId: Long? = null,
+        var bookId: Long?,
         @ColumnInfo(name = "book_title")
-        var bookTitle: String? = null
+        var bookTitle: String?
 ) {
     companion object {
         fun fromQuote(quote: Quote): QuoteEntity {
             return quote.let {
-                QuoteEntity(it.id, it.text, it.bookId, it.bookTitle)
+                QuoteEntity(it.id, it.text, it.isPublic, it.bookId, it.bookTitle)
             }
         }
     }
 
     fun toQuote(): Quote {
-        return Quote(id, bookId, bookTitle, text)
+        return Quote(id, bookId, bookTitle, text, isPublic)
     }
 }

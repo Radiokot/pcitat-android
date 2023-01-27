@@ -26,10 +26,11 @@ class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepo
                 .map { it.data.items }
     }
 
-    fun add(text: String): Observable<Quote> {
+    fun add(text: String, isPublic: Boolean): Observable<Quote> {
         val newQuote = Quote(
                 bookId = bookId,
-                text = text
+                text = text,
+                isPublic = isPublic,
         )
         return ApiFactory.getQuotesService()
                 .add(bookId, newQuote)
@@ -41,15 +42,16 @@ class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepo
                 }
     }
 
-    fun update(id: Long, text: String): Observable<Quote> {
+    fun update(id: Long, text: String, isPublic: Boolean): Observable<Quote> {
         return ApiFactory.getQuotesService()
-                .update(id, Quote(text = text))
+                .update(id, Quote(text = text, isPublic = isPublic))
                 .map { it.data }
                 .doOnNext {
                     quotesCache.items
                             .find { it.id == id }
                             ?.let {
                                 it.text = text
+                                it.isPublic = isPublic
                                 quotesCache.update(it)
                                 broadcast()
                                 PcEvents.publish(QuoteUpdatedEvent(it))

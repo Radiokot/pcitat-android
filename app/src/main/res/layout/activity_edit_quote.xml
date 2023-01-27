@@ -9,27 +9,54 @@
 
     <include layout="@layout/default_appbar" />
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/standard_margin"
-        android:paddingTop="@dimen/standard_margin">
+        android:layout_marginTop="?attr/actionBarSize">
 
-        <EditText
-            android:id="@+id/quote_edit_text"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/quote_is_public_checkbox"
+            android:layout_marginBottom="@dimen/half_standard_margin"
+            android:clipToPadding="false"
+            android:fadingEdge="vertical"
+            android:requiresFadingEdge="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/standard_margin" />
+
+                <EditText
+                    android:id="@+id/quote_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/input_text_hint"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:maxLength="5000"
+                    android:paddingStart="@dimen/standard_margin"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="@dimen/standard_margin"
+                    android:paddingBottom="0dp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <CheckBox
+            android:id="@+id/quote_is_public_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="@string/input_text_hint"
-            android:inputType="textCapSentences|textMultiLine"
-            android:maxLength="5000"
-            android:paddingBottom="0dp"
-            android:paddingEnd="@dimen/standard_margin"
-            android:paddingStart="@dimen/standard_margin"
-            android:paddingTop="0dp" />
-    </ScrollView>
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="@dimen/half_standard_margin"
+            android:layout_marginBottom="@dimen/half_standard_margin"
+            android:text="@string/public_quote" />
+
+    </RelativeLayout>
 
     <View
         android:id="@+id/focus_grabber"

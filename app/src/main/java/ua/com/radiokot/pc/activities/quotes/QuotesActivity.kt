@@ -205,8 +205,8 @@ class QuotesActivity : NavigationActivity() {
             needBookTitles = !withBook
             setData(listOf())
             onItemClick { _, item ->
-                Navigator.openEditQuoteActivity(this@QuotesActivity, item.bookId,
-                        item.bookTitle, item.id, item.text)
+                Navigator.openEditQuoteActivity(this@QuotesActivity, item.source.bookId,
+                        item.bookTitle, item.id, item.text, item.source.isPublic)
             }
         }
 

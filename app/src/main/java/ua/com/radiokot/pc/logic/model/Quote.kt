@@ -13,7 +13,9 @@ class Quote(
         @SerializedName("bookTitle")
         val bookTitle: String? = null,
         @SerializedName("text")
-        var text: String? = null
+        var text: String?,
+        @SerializedName("is_public")
+        var isPublic: Boolean,
 ) : Comparable<Quote> {
     override fun hashCode(): Int {
         return id?.hashCode() ?: super.hashCode()

@@ -79,13 +79,14 @@ object Navigator {
     }
 
     fun openEditQuoteActivity(activity: Activity, bookId: Long?, bookTitle: String?,
-                              quoteId: Long?, quoteText: String?) {
+                              quoteId: Long?, quoteText: String?, quoteIsPublic: Boolean?) {
         activity.startActivityForResult(activity.intentFor<EditQuoteActivity>(
                 EditQuoteActivity.IS_ADDING_EXTRA to false,
                 EditQuoteActivity.BOOK_ID_EXTRA to bookId,
                 EditQuoteActivity.BOOK_TITLE_EXTRA to bookTitle,
                 EditQuoteActivity.QUOTE_ID_EXTRA to quoteId,
-                EditQuoteActivity.QUOTE_TEXT_EXTRA to quoteText
+                EditQuoteActivity.QUOTE_TEXT_EXTRA to quoteText,
+                EditQuoteActivity.QUOTE_IS_PUBLIC_EXTRA to quoteIsPublic
         ), EditQuoteActivity.EDIT_QUOTE_REQUEST)
     }
 

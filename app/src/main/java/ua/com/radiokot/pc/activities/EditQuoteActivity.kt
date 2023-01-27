@@ -31,6 +31,7 @@ class EditQuoteActivity : BaseActivity() {
         const val BOOK_TITLE_EXTRA = "book_title"
         const val QUOTE_ID_EXTRA = "quote_id"
         const val QUOTE_TEXT_EXTRA = "quote_text"
+        const val QUOTE_IS_PUBLIC_EXTRA = "quote_is_public"
 
         val EDIT_QUOTE_REQUEST = "edit_quote".hashCode() and 0xffff
     }
@@ -45,6 +46,8 @@ class EditQuoteActivity : BaseActivity() {
         get() = intent.getLongExtra(QUOTE_ID_EXTRA, 0)
     private val quoteText: String
         get() = intent.getStringExtra(QUOTE_TEXT_EXTRA, "")
+    private val quoteIsPublic: Boolean
+        get() = intent.getBooleanExtra(QUOTE_IS_PUBLIC_EXTRA, true)
 
     private val quotesRepository: QuotesByBookRepository
         get() = Repositories.quotes(bookId)
@@ -78,6 +81,12 @@ class EditQuoteActivity : BaseActivity() {
                 //setSelection(quoteText.length, quoteText.length)
                 focus_grabber.requestFocus()
             }
+        }
+
+        quote_is_public_checkbox.apply {
+            typeface = TypefaceUtil.getRobotoSlabRegular()
+
+            isChecked = quoteIsPublic
         }
     }
 
@@ -172,11 +181,13 @@ class EditQuoteActivity : BaseActivity() {
         saveDisposable?.dispose()
 
         val text = quote_edit_text.text.trim().toString()
+        val isPublic = quote_is_public_checkbox.isChecked
+
         val saveObservable =
                 if (isAdding)
-                    quotesRepository.add(text)
+                    quotesRepository.add(text, isPublic)
                 else
-                    quotesRepository.update(quoteId, text)
+                    quotesRepository.update(quoteId, text, isPublic)
 
         saveDisposable = saveObservable
                 .compose(ObservableTransformers.defaultSchedulers())
