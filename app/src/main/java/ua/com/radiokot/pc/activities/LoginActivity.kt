@@ -68,7 +68,7 @@ class LoginActivity : BaseActivity() {
             }
         }.also {
             view.emailEditText.addTextChangedListener(it)
-            view.emailEditText.addTextChangedListener(it)
+            view.passwordEditText.addTextChangedListener(it)
         }
 
         EditTextUtil.onEditorAction(view.passwordEditText) {
