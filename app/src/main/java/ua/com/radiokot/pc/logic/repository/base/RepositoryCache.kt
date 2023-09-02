@@ -12,20 +12,20 @@ abstract class RepositoryCache<T> {
     protected open var isLoaded = false
 
     open fun loadFromDb(): Completable {
-        synchronized(this ) {
+        synchronized(this) {
             val initSingle =
-                    if (!isLoaded)
-                        getAllFromDb()
-                                .doOnSuccess {
-                                    isLoaded = true
-                                    mItems.clear()
-                                    mItems.addAll(it)
-                                }
-                    else
-                        Single.just(listOf())
+                if (!isLoaded)
+                    getAllFromDb()
+                        .doOnSuccess {
+                            isLoaded = true
+                            mItems.clear()
+                            mItems.addAll(it)
+                        }
+                else
+                    Single.just(listOf())
 
             return Completable.fromSingle(initSingle)
-                    .compose(ObservableTransformers.defaultSchedulersCompletable())
+                .compose(ObservableTransformers.defaultSchedulersCompletable())
         }
     }
 
@@ -62,10 +62,10 @@ abstract class RepositoryCache<T> {
         var changesOccurred = false
 
         val operatingItems =
-                if (filter != null)
-                    mItems.filter(filter)
-                else
-                    mItems
+            if (filter != null)
+                mItems.filter(filter)
+            else
+                mItems
 
         if (operatingItems.isEmpty()) {
             if (items.isNotEmpty()) {
@@ -134,7 +134,7 @@ abstract class RepositoryCache<T> {
         return changesOccurred
     }
 
-    protected open fun sortItems() { }
+    protected open fun sortItems() {}
 
     // region Abstract
 

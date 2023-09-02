@@ -25,33 +25,33 @@ abstract class SimpleMultipleItemsRepository<T> : MultipleItemsRepository<T>() {
             isLoading = true
 
             val loadItemsFromDb =
-                    if (isNeverUpdated)
-                        itemsCache.loadFromDb().doOnComplete { broadcast() }
-                    else
-                        Completable.complete()
+                if (isNeverUpdated)
+                    itemsCache.loadFromDb().doOnComplete { broadcast() }
+                else
+                    Completable.complete()
 
             updateDisposable?.dispose()
             updateDisposable = loadItemsFromDb.andThen(getItems())
-                    .subscribeBy(
-                            onNext = { items ->
-                                onNewItems(items)
-                            },
-                            onComplete = {
-                                isLoading = false
+                .subscribeBy(
+                    onNext = { items ->
+                        onNewItems(items)
+                    },
+                    onComplete = {
+                        isLoading = false
 
-                                updateResultSubject = null
-                                resultSubject.onNext(true)
-                                resultSubject.onComplete()
-                            },
-                            onError = {
-                                isLoading = false
-                                errorsSubject.onNext(it)
+                        updateResultSubject = null
+                        resultSubject.onNext(true)
+                        resultSubject.onComplete()
+                    },
+                    onError = {
+                        isLoading = false
+                        errorsSubject.onNext(it)
 
-                                updateResultSubject = null
-                                resultSubject.onError(it)
-                                resultSubject.onComplete()
-                            }
-                    )
+                        updateResultSubject = null
+                        resultSubject.onError(it)
+                        resultSubject.onComplete()
+                    }
+                )
 
             resultSubject
         }

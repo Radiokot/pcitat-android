@@ -1,6 +1,5 @@
 package ua.com.radiokot.pc.logic.api
 
-import android.util.Log
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -9,7 +8,6 @@ import com.google.gson.GsonBuilder
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -20,7 +18,6 @@ import ua.com.radiokot.pc.logic.exceptions.BadRequestException
 import ua.com.radiokot.pc.logic.exceptions.ConflictException
 import ua.com.radiokot.pc.logic.exceptions.NotAuthorizedException
 import ua.com.radiokot.pc.logic.exceptions.NotFoundException
-import ua.com.radiokot.pc.util.TLSSocketFactory
 import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
@@ -43,30 +40,30 @@ object ApiFactory {
     // region Service creation
     fun getUserService(): UserService {
         return userService ?: createBaseRetrofitConfig(getBaseHttpClient())
-                .build()
-                .create(UserService::class.java)
-                .also { userService = it }
+            .build()
+            .create(UserService::class.java)
+            .also { userService = it }
     }
 
     fun getBooksService(): BooksService {
         return booksService ?: createBaseRetrofitConfig(getBaseHttpClient())
-                .build()
-                .create(BooksService::class.java)
-                .also { booksService = it }
+            .build()
+            .create(BooksService::class.java)
+            .also { booksService = it }
     }
 
     fun getQuotesService(): QuotesService {
         return quotesService ?: createBaseRetrofitConfig(getBaseHttpClient())
-                .build()
-                .create(QuotesService::class.java)
-                .also { quotesService = it }
+            .build()
+            .create(QuotesService::class.java)
+            .also { quotesService = it }
     }
 
     fun getLiveLibService(): LiveLibService {
         return liveLibService ?: createBaseRetrofitConfig(getBaseHttpClient())
-                .build()
-                .create(LiveLibService::class.java)
-                .also { liveLibService = it }
+            .build()
+            .create(LiveLibService::class.java)
+            .also { liveLibService = it }
     }
     // endregion
 
@@ -74,12 +71,15 @@ object ApiFactory {
     private fun createBaseRetrofitConfig(httpClient: OkHttpClient = getBaseHttpClient()):
             Retrofit.Builder {
         return Retrofit.Builder()
-                .baseUrl(API_URL)
-                .client(httpClient)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(createBaseJsonConverterFactory())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(
-                        Schedulers.newThread()))
+            .baseUrl(API_URL)
+            .client(httpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(createBaseJsonConverterFactory())
+            .addCallAdapterFactory(
+                RxJava2CallAdapterFactory.createWithScheduler(
+                    Schedulers.newThread()
+                )
+            )
     }
 
     private fun createBaseJsonConverterFactory(): GsonConverterFactory {
@@ -113,19 +113,20 @@ object ApiFactory {
     fun getBaseHttpClient(): OkHttpClient {
         synchronized(this) {
             val clientBuilder = OkHttpClient.Builder()
-                    .readTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
-                    .connectTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+                .readTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+                .connectTimeout(REQUEST_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
 
-            val socketFactory = TLSSocketFactory()
-            if (Platform.get().trustManager(socketFactory) != null) {
-                clientBuilder.sslSocketFactory(socketFactory)
-            } else {
-                Log.e("ApiFactory", "Unable to use modern TLS socket factory")
-            }
+            // TODO: Is this still relevant?
+//            val socketFactory = TLSSocketFactory()
+//            if (Platform.get().trustManager(socketFactory) != null) {
+//                clientBuilder.sslSocketFactory(socketFactory)
+//            } else {
+//                Log.e("ApiFactory", "Unable to use modern TLS socket factory")
+//            }
 
             clientBuilder
-                    .addInterceptor(createLoggingInterceptor())
-                    .addInterceptor(createHttpCodesWrappingInterceptor())
+                .addInterceptor(createLoggingInterceptor())
+                .addInterceptor(createHttpCodesWrappingInterceptor())
 
             clientBuilder.cookieJar(getBaseCookieJar())
 
@@ -143,15 +144,17 @@ object ApiFactory {
 
     fun getBaseGson(): Gson {
         val builder = GsonBuilder()
-                .serializeNulls()
+            .serializeNulls()
         return builder.create()
     }
 
     private var cookieJar: PersistentCookieJar? = null
     fun getBaseCookieJar(): PersistentCookieJar {
-        return cookieJar ?:
-            PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(App.instance))
-                    .also { cookieJar = it }
+        return cookieJar ?: PersistentCookieJar(
+            SetCookieCache(),
+            SharedPrefsCookiePersistor(App.instance)
+        )
+            .also { cookieJar = it }
     }
     // endregion
 }

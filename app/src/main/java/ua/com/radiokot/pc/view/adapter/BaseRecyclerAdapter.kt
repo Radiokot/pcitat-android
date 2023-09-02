@@ -1,19 +1,18 @@
 package ua.com.radiokot.pc.view.adapter
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseRecyclerAdapter<T, V>: RecyclerView.Adapter<V>() where V : BaseViewHolder<T> {
+abstract class BaseRecyclerAdapter<T, V : BaseViewHolder<T>> : RecyclerView.Adapter<V>() {
     companion object {
-        protected val VIEW_TYPE_ITEM = 0
+        protected const val VIEW_TYPE_ITEM = 0
     }
 
     protected val items = mutableListOf<T>()
 
-    override fun onBindViewHolder(holder: V?, position: Int) {
-        val viewType = getItemViewType(position)
-        when (viewType) {
+    override fun onBindViewHolder(holder: V, position: Int) {
+        when (getItemViewType(position)) {
             VIEW_TYPE_ITEM -> bindItemViewHolder(holder, position)
         }
     }
@@ -22,7 +21,7 @@ abstract class BaseRecyclerAdapter<T, V>: RecyclerView.Adapter<V>() where V : Ba
         return items.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): V? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): V {
         return createItemViewHolder(parent)
     }
 

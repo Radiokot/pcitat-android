@@ -1,8 +1,6 @@
 package ua.com.radiokot.pc.view
 
 import android.content.Context
-import android.support.annotation.StringRes
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,7 +8,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import org.jetbrains.anko.onClick
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.util.error_handlers.ErrorHandlerFactory
 
@@ -36,8 +35,10 @@ class ErrorEmptyView : LinearLayout {
         gravity = Gravity.CENTER
         visibility = View.GONE
 
-        LayoutInflater.from(context).inflate(R.layout.layout_error_empty_view,
-                this, true)
+        LayoutInflater.from(context).inflate(
+            R.layout.layout_error_empty_view,
+            this, true
+        )
 
         messageTextView = findViewById(R.id.message_text_view)
         actionButton = findViewById(R.id.action_button)
@@ -71,21 +72,25 @@ class ErrorEmptyView : LinearLayout {
 
         if (actionButtonClick != null) {
             actionButton.visibility = View.VISIBLE
-            actionButton.onClick { actionButtonClick.invoke() }
+            actionButton.setOnClickListener { actionButtonClick.invoke() }
         } else {
             actionButton.visibility = View.GONE
         }
     }
 
-    fun observeAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
-                       @StringRes messageId: Int) {
+    fun observeAdapter(
+        adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
+        @StringRes messageId: Int
+    ) {
         adapter.registerAdapterDataObserver(getEmptyObserver(adapter) {
             context.getString(messageId)
         })
     }
 
-    fun observeAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
-                       messageProvider: () -> String) {
+    fun observeAdapter(
+        adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
+        messageProvider: () -> String
+    ) {
         adapter.registerAdapterDataObserver(getEmptyObserver(adapter, messageProvider))
     }
 
@@ -93,8 +98,10 @@ class ErrorEmptyView : LinearLayout {
         this.emptyViewDenial = denial
     }
 
-    private fun getEmptyObserver(adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
-                                 messageProvider: () -> String):
+    private fun getEmptyObserver(
+        adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
+        messageProvider: () -> String
+    ):
             RecyclerView.AdapterDataObserver {
         return object : RecyclerView.AdapterDataObserver() {
             private fun operate() {

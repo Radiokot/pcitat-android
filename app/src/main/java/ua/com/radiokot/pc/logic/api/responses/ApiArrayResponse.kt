@@ -9,6 +9,7 @@ class ApiArrayResponse<out T> : ApiResponse<ApiArrayResponse.ApiArray<T>>() {
     class ApiArray<out T> {
         @SerializedName("items")
         private val mItems: List<T>? = null
+
         @SerializedName("count")
         val count: Int = 0
 

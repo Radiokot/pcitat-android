@@ -21,24 +21,28 @@ class ReplaceDefaultAvatarTransformation : Transformation {
         val height = source?.height ?: 0
 
         val defaultTwitterAvatar =
-                Bitmap.createScaledBitmap(
-                        BitmapFactory.decodeResource(App.instance.resources,
-                                R.drawable.default_twitter_avatar),
-                        width, height, false)
+            Bitmap.createScaledBitmap(
+                BitmapFactory.decodeResource(
+                    App.instance.resources,
+                    R.drawable.default_twitter_avatar
+                ),
+                width, height, false
+            )
 
         val controlPixels = arrayOf(
-                0 to 0, width - 1 to height - 1,
-                width / 2 to height / 2
+            0 to 0, width - 1 to height - 1,
+            width / 2 to height / 2
         )
 
         return if (source == null
-                || controlPixels.all { (x, y) ->
-                    source.getPixel(x, y) ==
-                            defaultTwitterAvatar.getPixel(x, y)
-                }) {
+            || controlPixels.all { (x, y) ->
+                source.getPixel(x, y) ==
+                        defaultTwitterAvatar.getPixel(x, y)
+            }
+        ) {
             source?.recycle()
             return BitmapUtil
-                    .getBitmapFromVectorDrawable(App.instance, R.drawable.default_profile_image)
+                .getBitmapFromVectorDrawable(App.instance, R.drawable.default_profile_image)
         } else {
             source
         }

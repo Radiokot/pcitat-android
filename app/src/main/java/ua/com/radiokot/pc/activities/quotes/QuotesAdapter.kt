@@ -1,11 +1,10 @@
 package ua.com.radiokot.pc.activities.quotes
 
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.R
-import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.view.adapter.BaseRecyclerAdapter
 
 class QuotesAdapter : BaseRecyclerAdapter<QuoteListItem, QuoteViewHolder>() {
@@ -13,11 +12,11 @@ class QuotesAdapter : BaseRecyclerAdapter<QuoteListItem, QuoteViewHolder>() {
 
     override fun createItemViewHolder(parent: ViewGroup?): QuoteViewHolder {
         val view = LayoutInflater.from(parent?.context ?: App.instance)
-                .inflate(R.layout.list_item_quote, parent, false)
+            .inflate(R.layout.list_item_quote, parent, false)
         return QuoteViewHolder(view, needBookTitles)
     }
 
-    override fun getDiffCallback(newItems: List<QuoteListItem>): DiffUtil.Callback? {
+    override fun getDiffCallback(newItems: List<QuoteListItem>): DiffUtil.Callback {
         return object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return items[oldItemPosition].id == newItems[newItemPosition].id

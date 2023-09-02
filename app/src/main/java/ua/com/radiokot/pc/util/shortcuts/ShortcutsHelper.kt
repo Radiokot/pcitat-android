@@ -3,7 +3,7 @@ package ua.com.radiokot.pc.util.shortcuts
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.os.Build
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import ua.com.radiokot.pc.App
 
 object ShortcutsHelper {

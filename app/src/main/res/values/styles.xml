@@ -16,7 +16,7 @@
 
     <style name="InputField">
         <item name="met_floatingLabel">normal</item>
-        <item name="met_primaryColor">@color/accent</item>
+        <item name="met_primaryColor">@color/colorAccent</item>
     </style>
 
     <style name="Heading">
@@ -33,11 +33,11 @@
 
     <style name="PrimaryButton" parent="Base.Widget.AppCompat.Button.Colored">
         <item name="android:theme">@style/PrimaryButton.Overlay</item>
-        <item name="android:textColor">@color/md_white_1000</item>
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="SecondaryButton" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">@color/md_light_secondary</item>
+        <item name="android:textColor">@color/secondaryAction</item>
     </style>
 
     <style name="Heading.Book" parent="Heading">
@@ -58,7 +58,7 @@
     </style>
 
     <style name="BookIndicator">
-        <item name="android:textColor">@color/md_white_1000</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:layout_height">22sp</item>
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">center</item>

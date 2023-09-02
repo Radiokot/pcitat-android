@@ -23,50 +23,50 @@ class QuotesByBookRepository(private val bookId: Long) : SimpleMultipleItemsRepo
 
     override fun getItems(): Observable<List<Quote>> {
         return ApiFactory.getQuotesService().getByBookId(bookId)
-                .map { it.data.items }
+            .map { it.data.items }
     }
 
     fun add(text: String, isPublic: Boolean): Observable<Quote> {
         val newQuote = Quote(
-                bookId = bookId,
-                text = text,
-                isPublic = isPublic,
+            bookId = bookId,
+            text = text,
+            isPublic = isPublic,
         )
         return ApiFactory.getQuotesService()
-                .add(bookId, newQuote)
-                .map { it.data }
-                .doOnNext {
-                    quotesCache.add(it)
-                    broadcast()
-                    PcEvents.publish(QuoteAddedEvent(it))
-                }
+            .add(bookId, newQuote)
+            .map { it.data }
+            .doOnNext {
+                quotesCache.add(it)
+                broadcast()
+                PcEvents.publish(QuoteAddedEvent(it))
+            }
     }
 
     fun update(id: Long, text: String, isPublic: Boolean): Observable<Quote> {
         return ApiFactory.getQuotesService()
-                .update(id, Quote(text = text, isPublic = isPublic))
-                .map { it.data }
-                .doOnNext {
-                    quotesCache.items
-                            .find { it.id == id }
-                            ?.let {
-                                it.text = text
-                                it.isPublic = isPublic
-                                quotesCache.update(it)
-                                broadcast()
-                                PcEvents.publish(QuoteUpdatedEvent(it))
-                            }
-                }
+            .update(id, Quote(text = text, isPublic = isPublic))
+            .map { it.data }
+            .doOnNext {
+                quotesCache.items
+                    .find { it.id == id }
+                    ?.let {
+                        it.text = text
+                        it.isPublic = isPublic
+                        quotesCache.update(it)
+                        broadcast()
+                        PcEvents.publish(QuoteUpdatedEvent(it))
+                    }
+            }
     }
 
     fun delete(id: Long): Completable {
         return ApiFactory.getQuotesService()
-                .delete(id)
-                .doOnComplete {
-                    quotesCache.deleteById(id)
-                    broadcast()
-                    PcEvents.publish(QuoteDeletedEvent(id, bookId))
-                }
+            .delete(id)
+            .doOnComplete {
+                quotesCache.deleteById(id)
+                broadcast()
+                PcEvents.publish(QuoteDeletedEvent(id, bookId))
+            }
     }
 
     override fun onNewItems(newItems: List<Quote>) {

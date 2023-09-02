@@ -10,7 +10,7 @@ import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
  */
 abstract class Repository {
     val errorsSubject: PublishSubject<Throwable> =
-            PublishSubject.create<Throwable>()
+        PublishSubject.create<Throwable>()
 
     val loadingSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(false)
     var isLoading: Boolean = false

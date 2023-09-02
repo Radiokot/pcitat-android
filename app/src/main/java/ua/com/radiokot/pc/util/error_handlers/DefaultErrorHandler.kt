@@ -16,6 +16,7 @@ open class DefaultErrorHandler : ErrorHandler {
         when (error) {
             is CancellationException ->
                 return true
+
             else -> {
                 return getErrorMessage(error)?.let {
                     ToastManager.short(it)
@@ -32,10 +33,13 @@ open class DefaultErrorHandler : ErrorHandler {
         return when (error) {
             is CancellationException ->
                 null
+
             is NotFoundException ->
                 App.instance.getString(R.string.error_not_found_try_again)
+
             is IOException ->
                 App.instance.getString(R.string.error_io_try_again)
+
             else -> {
                 App.instance.getString(R.string.error_occured_try_again)
             }

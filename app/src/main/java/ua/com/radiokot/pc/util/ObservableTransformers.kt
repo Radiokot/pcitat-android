@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 object ObservableTransformers {
     private val defaultSchedulers = ObservableTransformer<Any, Any> { upstream ->
         upstream.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     @SuppressWarnings("unchecked")
@@ -22,7 +22,7 @@ object ObservableTransformers {
     fun defaultSchedulersCompletable(): CompletableTransformer {
         return CompletableTransformer { upstream ->
             upstream.subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
         }
     }
 }

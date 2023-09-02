@@ -25,15 +25,15 @@ object AnimationUtil {
 
         val animator = getHeightAnimator(0, view.measuredHeight, view)
         animator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 val layoutParams = view.layoutParams
                 layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 view.layoutParams = layoutParams
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationRepeat(animation: Animator) {}
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationStart(animation: Animator) {}
         })
         animator.start()
     }
@@ -46,14 +46,14 @@ object AnimationUtil {
         val height = view.height
         val animator = getHeightAnimator(height, 0, view)
         animator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 view.visibility = View.GONE
                 onEnd?.invoke()
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationRepeat(animation: Animator) {}
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationStart(animation: Animator) {}
         })
         animator.start()
     }
@@ -66,7 +66,7 @@ object AnimationUtil {
         val alphaAnimation = AlphaAnimation(0f, 1f)
         alphaAnimation.interpolator = AccelerateDecelerateInterpolator()
         alphaAnimation.duration =
-                view.context.resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
+            view.context.resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
         alphaAnimation.fillAfter = true
 
         view.clearAnimation()
@@ -77,7 +77,7 @@ object AnimationUtil {
         val animator = ValueAnimator.ofInt(from, to)
         animator.interpolator = AccelerateDecelerateInterpolator()
         animator.duration =
-                view.context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+            view.context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
         animator.addUpdateListener {
             val value = animator.animatedValue as Int
             val layoutParams = view.layoutParams
@@ -90,11 +90,13 @@ object AnimationUtil {
     fun rotateView(view: View?, from: Float, to: Float) {
         view ?: return
 
-        val rotateAnimation = RotateAnimation(from, to,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+        val rotateAnimation = RotateAnimation(
+            from, to,
+            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+        )
         rotateAnimation.interpolator = AccelerateDecelerateInterpolator()
         rotateAnimation.duration =
-                view.context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+            view.context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
         rotateAnimation.fillAfter = true
 
         view.clearAnimation()

@@ -10,7 +10,7 @@ abstract class MultipleItemsRepository<T> : Repository() {
     protected abstract val itemsCache: RepositoryCache<T>
 
     val itemsSubject: BehaviorSubject<List<T>> =
-            BehaviorSubject.createDefault<List<T>>(listOf())
+        BehaviorSubject.createDefault<List<T>>(listOf())
 
     protected open fun broadcast() {
         itemsSubject.onNext(itemsCache.items)

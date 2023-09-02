@@ -52,11 +52,12 @@
                 android:imeOptions="actionDone"
                 android:inputType="textPassword" />
 
-            <android.support.v4.widget.Space
+            <Space
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/standard_margin" />
 
             <include
+                android:id="@+id/include_progress"
                 layout="@layout/layout_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -72,8 +73,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:paddingEnd="@dimen/double_standard_margin"
                     android:paddingStart="@dimen/double_standard_margin"
+                    android:paddingEnd="@dimen/double_standard_margin"
                     android:text="@string/login"
                     android:theme="@style/PrimaryButton.Overlay" />
 
@@ -98,7 +99,7 @@
 
             </RelativeLayout>
 
-            <android.support.v4.widget.Space
+            <Space
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="@dimen/login_signup_logo_size" />

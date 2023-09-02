@@ -5,9 +5,10 @@
             <solid android:color="#F5F5F5" />
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_book"
+    <item
+        android:drawable="@drawable/ic_book"
         android:left="@dimen/standard_margin"
         android:top="@dimen/standard_margin"
         android:bottom="@dimen/standard_margin"
-        android:right="@dimen/standard_margin"/>
+        android:right="@dimen/standard_margin" />
 </layer-list>

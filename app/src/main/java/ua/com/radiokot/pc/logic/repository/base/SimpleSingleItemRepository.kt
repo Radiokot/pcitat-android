@@ -25,36 +25,36 @@ abstract class SimpleSingleItemRepository<T : Any> : SingleItemRepository<T>() {
             isLoading = true
 
             val storedItemObservable =
-                    if (isNeverUpdated) getStoredItem() else Observable.empty()
+                if (isNeverUpdated) getStoredItem() else Observable.empty()
 
             updateDisposable?.dispose()
             updateDisposable = storedItemObservable.concatWith(
-                    getItem()
-                            .map {
-                                storeItem(it)
-                                it
-                            }
+                getItem()
+                    .map {
+                        storeItem(it)
+                        it
+                    }
             )
-                    .subscribeBy(
-                            onNext = { newItem: T ->
-                                onNewItem(newItem)
-                            },
-                            onComplete = {
-                                isLoading = false
+                .subscribeBy(
+                    onNext = { newItem: T ->
+                        onNewItem(newItem)
+                    },
+                    onComplete = {
+                        isLoading = false
 
-                                updateResultSubject = null
-                                resultSubject.onNext(true)
-                                resultSubject.onComplete()
-                            },
-                            onError = {
-                                isLoading = false
-                                errorsSubject.onNext(it)
+                        updateResultSubject = null
+                        resultSubject.onNext(true)
+                        resultSubject.onComplete()
+                    },
+                    onError = {
+                        isLoading = false
+                        errorsSubject.onNext(it)
 
-                                updateResultSubject = null
-                                resultSubject.onError(it)
-                                resultSubject.onComplete()
-                            }
-                    )
+                        updateResultSubject = null
+                        resultSubject.onError(it)
+                        resultSubject.onComplete()
+                    }
+                )
 
             resultSubject
         }

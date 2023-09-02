@@ -1,11 +1,11 @@
 package ua.com.radiokot.pc.logic.repository
 
 import io.reactivex.Single
-import org.jetbrains.anko.doAsync
 import ua.com.radiokot.pc.logic.db.DbFactory
 import ua.com.radiokot.pc.logic.db.entities.BookEntity
 import ua.com.radiokot.pc.logic.model.Book
 import ua.com.radiokot.pc.logic.repository.base.RepositoryCache
+import kotlin.concurrent.thread
 
 class BooksCache : RepositoryCache<Book>() {
     private var dao = DbFactory.getAppDatabase().bookDao
@@ -29,25 +29,25 @@ class BooksCache : RepositoryCache<Book>() {
     }
 
     override fun addToDb(items: List<Book>) {
-        doAsync {
+        thread {
             dao.insert(*items.map { BookEntity.fromBook(it) }.toTypedArray())
         }
     }
 
     override fun updateInDb(items: List<Book>) {
-        doAsync {
+        thread {
             dao.update(*items.map { BookEntity.fromBook(it) }.toTypedArray())
         }
     }
 
     override fun deleteFromDb(items: List<Book>) {
-        doAsync {
+        thread {
             dao.delete(*items.map { BookEntity.fromBook(it) }.toTypedArray())
         }
     }
 
     override fun clearDb() {
-        doAsync {
+        thread {
             dao.deleteAll()
         }
     }

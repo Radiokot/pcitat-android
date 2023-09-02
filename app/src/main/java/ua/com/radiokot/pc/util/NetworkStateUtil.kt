@@ -7,8 +7,8 @@ import ua.com.radiokot.pc.App
 object NetworkStateUtil {
     fun isNetworkAvailable(): Boolean {
         val connectivityManager =
-                App.Companion.instance.getSystemService(Context.CONNECTIVITY_SERVICE)
-                        as ConnectivityManager
+            App.Companion.instance.getSystemService(Context.CONNECTIVITY_SERVICE)
+                    as ConnectivityManager
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }

@@ -27,15 +27,17 @@ object PcEvents {
 
     fun subscribe(onEvent: (PcEvent) -> Unit): Disposable {
         return observable
-                .compose(ObservableTransformers.defaultSchedulers())
-                .subscribeBy(onEvent)
+            .compose(ObservableTransformers.defaultSchedulers())
+            .subscribeBy(onEvent)
     }
 
-    fun subscribeUntilDestroy(activity: RxAppCompatActivity,
-                              onEvent: (PcEvent) -> Unit): Disposable {
+    fun subscribeUntilDestroy(
+        activity: RxAppCompatActivity,
+        onEvent: (PcEvent) -> Unit
+    ): Disposable {
         return observable
-                .bindUntilEvent(activity.lifecycle(), ActivityEvent.DESTROY)
-                .compose(ObservableTransformers.defaultSchedulers())
-                .subscribeBy(onEvent)
+            .bindUntilEvent(activity.lifecycle(), ActivityEvent.DESTROY)
+            .compose(ObservableTransformers.defaultSchedulers())
+            .subscribeBy(onEvent)
     }
 }

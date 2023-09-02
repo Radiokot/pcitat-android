@@ -3,7 +3,12 @@ package ua.com.radiokot.pc.logic.repository
 import io.reactivex.Observable
 import ua.com.radiokot.pc.App
 import ua.com.radiokot.pc.logic.api.ApiFactory
-import ua.com.radiokot.pc.logic.event_bus.events.*
+import ua.com.radiokot.pc.logic.event_bus.events.BookDeletedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.BookQuotesUpdatedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
+import ua.com.radiokot.pc.logic.event_bus.events.QuoteAddedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.QuoteDeletedEvent
+import ua.com.radiokot.pc.logic.event_bus.events.QuoteUpdatedEvent
 import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.logic.repository.base.RepositoryCache
 import ua.com.radiokot.pc.logic.repository.base.SimpleMultipleItemsRepository
@@ -18,7 +23,7 @@ open class QuotesRepository : SimpleMultipleItemsRepository<Quote>() {
 
     override fun getItems(): Observable<List<Quote>> {
         return ApiFactory.getQuotesService().get()
-                .map { it.data.items }
+            .map { it.data.items }
     }
 
     override fun handleEvent(event: PcEvent) {
@@ -28,8 +33,9 @@ open class QuotesRepository : SimpleMultipleItemsRepository<Quote>() {
                 quotesCache.mergeForBook(event.bookId, listOf())
                 broadcast()
             }
+
             is BookQuotesUpdatedEvent, is QuoteAddedEvent,
-            is QuoteDeletedEvent, is QuoteUpdatedEvent-> {
+            is QuoteDeletedEvent, is QuoteUpdatedEvent -> {
                 broadcast()
             }
         }

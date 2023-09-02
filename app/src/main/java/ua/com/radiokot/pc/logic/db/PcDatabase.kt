@@ -9,8 +9,10 @@ import ua.com.radiokot.pc.logic.db.entities.BookEntity
 import ua.com.radiokot.pc.logic.db.entities.QuoteEntity
 import ua.com.radiokot.pc.logic.db.entities.UserEntity
 
-@Database(entities = [UserEntity::class, BookEntity::class, QuoteEntity::class],
-        version = 2, exportSchema = false)
+@Database(
+    entities = [UserEntity::class, BookEntity::class, QuoteEntity::class],
+    version = 2, exportSchema = false
+)
 abstract class PcDatabase : RoomDatabase() {
     abstract val userDao: UserDao
     abstract val bookDao: BookDao

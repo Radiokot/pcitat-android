@@ -11,10 +11,12 @@ object AppShortcutsManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             if (AuthManager.isAuthorized()) {
                 val factory = ShortcutsFactory(App.instance)
-                ShortcutsHelper.addShortcuts(listOf(
+                ShortcutsHelper.addShortcuts(
+                    listOf(
                         factory.getBooksShortcut(),
                         factory.getQuotesShortcut()
-                ))
+                    )
+                )
             } else {
                 ShortcutsHelper.removeAll()
             }

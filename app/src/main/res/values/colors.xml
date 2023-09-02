@@ -8,7 +8,10 @@
     <color name="secondaryAction">#999999</color>
     <color name="background">#efefef</color>
     <color name="icon">#6F6F6F</color>
-    <color name="primaryText">@color/md_grey_900</color>
+    <color name="primaryText">#212121</color>
 
     <color name="material_drawer_selected_text">@color/material_drawer_primary_text</color>
+    <color name="material_drawer_selected">#eeeeee</color>
+    <color name="material_drawer_header_selection_text">@color/colorPrimary</color>
+    <color name="material_drawer_header_selection_subtext">@color/colorPrimary</color>
 </resources>

@@ -1,7 +1,7 @@
 package ua.com.radiokot.pc.util
 
-import android.support.annotation.StringRes
 import android.widget.Toast
+import androidx.annotation.StringRes
 import ua.com.radiokot.pc.App
 
 object ToastManager {

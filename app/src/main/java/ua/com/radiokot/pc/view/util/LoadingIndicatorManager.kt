@@ -3,8 +3,10 @@ package ua.com.radiokot.pc.view.util
 /**
  * Manages loading indicator visibility when there are few parallel tasks which requires it.
  */
-class LoadingIndicatorManager(private val showLoading: () -> Unit,
-                              private val hideLoading: () -> Unit) {
+class LoadingIndicatorManager(
+    private val showLoading: () -> Unit,
+    private val hideLoading: () -> Unit
+) {
     private val requests = mutableSetOf<String>()
 
     var isLoading: Boolean = false

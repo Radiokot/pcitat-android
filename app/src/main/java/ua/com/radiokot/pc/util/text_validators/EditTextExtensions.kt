@@ -1,7 +1,7 @@
 package ua.com.radiokot.pc.util.text_validators
 
-import android.support.annotation.StringRes
 import android.widget.EditText
+import androidx.annotation.StringRes
 import ua.com.radiokot.pc.util.SoftInputUtil
 
 fun EditText.hasError(): Boolean {

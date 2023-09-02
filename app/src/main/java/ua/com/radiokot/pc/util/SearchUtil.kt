@@ -15,8 +15,9 @@ object SearchUtil {
         val unmatchedQueryParts = query.split(" ").toMutableList()
         var unmatchedChanged = true
         while (unmatchedFieldsParts.isNotEmpty()
-                && unmatchedQueryParts.isNotEmpty()
-                && unmatchedChanged) {
+            && unmatchedQueryParts.isNotEmpty()
+            && unmatchedChanged
+        ) {
             val unmatchedFieldsPartsIterator = unmatchedFieldsParts.iterator()
             unmatchedChanged = false
             while (unmatchedFieldsPartsIterator.hasNext()) {

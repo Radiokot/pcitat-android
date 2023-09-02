@@ -5,28 +5,25 @@ import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SimpleItemAnimator
-import android.support.v7.widget.Toolbar
 import android.text.StaticLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuItemCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.activity_quotes.*
-import kotlinx.android.synthetic.main.default_toolbar.*
-import kotlinx.android.synthetic.main.include_appbar_elevation.*
-import kotlinx.android.synthetic.main.include_error_empty_view.*
-import kotlinx.android.synthetic.main.layout_progress.*
-import kotlinx.android.synthetic.main.quotes_book_appbar.*
-import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
+import ua.com.radiokot.pc.databinding.ActivityQuotesBinding
 import ua.com.radiokot.pc.logic.model.Quote
 import ua.com.radiokot.pc.logic.repository.BooksRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
@@ -52,6 +49,8 @@ class QuotesActivity : NavigationActivity() {
         const val BOOK_IS_TWITTER_EXTRA = "book_is_twitter"
     }
 
+    private lateinit var view: ActivityQuotesBinding
+
     private val bookId: Long
         get() = intent.getLongExtra(BOOK_ID_EXTRA, 0)
     private val bookTitle: String
@@ -68,6 +67,13 @@ class QuotesActivity : NavigationActivity() {
             updateTwitterIndicator()
         }
 
+    private val collapsingToolbar: CollapsingToolbarLayout by lazy {
+        findViewById(R.id.collapsing_toolbar)
+    }
+    private val bookAuthorTextView: TextView by lazy {
+        findViewById(R.id.book_author_text_view)
+    }
+
     private val quotesRepository: MultipleItemsRepository<Quote>
         get() =
             if (withBook)
@@ -82,7 +88,9 @@ class QuotesActivity : NavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_quotes)
+
+        view = ActivityQuotesBinding.inflate(layoutInflater)
+        setContentView(view.root)
 
         initToolbar()
         initFab()
@@ -94,47 +102,51 @@ class QuotesActivity : NavigationActivity() {
         update()
     }
 
-    override fun getToolbar(): Toolbar? = if (withBook) collapsing_inner_toolbar else toolbar
+    override fun getToolbar(): Toolbar? =
+        if (withBook)
+            findViewById(R.id.collapsing_inner_toolbar)
+        else
+            findViewById(R.id.toolbar)
 
     // region Init
     private fun initToolbar() = if (!withBook) {
-        appbar_view_stub.layoutResource = R.layout.default_appbar
-        appbar_view_stub.inflate()
+        view.appbarViewStub.layoutResource = R.layout.default_appbar
+        view.appbarViewStub.inflate()
 
         initToolbar(R.string.my_quotes, false)
         initNavigation()
     } else {
-        appbar_view_stub.layoutResource = R.layout.quotes_book_appbar
-        appbar_view_stub.inflate()
+        view.appbarViewStub.layoutResource = R.layout.quotes_book_appbar
+        view.appbarViewStub.inflate()
 
         initToolbar(bookTitle)
-        collapsing_toolbar.title = bookTitle
-        book_author_text_view.text = bookAuthor
+        collapsingToolbar.title = bookTitle
+        bookAuthorTextView.text = bookAuthor
 
         TypefaceUtil.getCondensedBold().let {
-            collapsing_toolbar.setCollapsedTitleTypeface(it)
-            collapsing_toolbar.setExpandedTitleTypeface(it)
+            collapsingToolbar.setCollapsedTitleTypeface(it)
+            collapsingToolbar.setExpandedTitleTypeface(it)
         }
 
-        collapsing_appbar.targetElevation = 0f
-        appbar_elevation_view.visibility = View.VISIBLE
+        findViewById<AppBarLayout>(R.id.collapsing_appbar).targetElevation = 0f
+        view.includeAppbarElevation.appbarElevationView.visibility = View.VISIBLE
 
-        book_author_text_view.typeface = TypefaceUtil.getRobotoSlabRegular()
+        bookAuthorTextView.typeface = TypefaceUtil.getRobotoSlabRegular()
     }
 
+    // TODO: This is no more working.
     private fun getExpandedTitleLinesCount(): Int? {
         // I really don't want to rebuild the library, so
         // let's do some reflection.
         try {
-            val collapsingToolbar = collapsing_toolbar ?: return null
             val collapsingTextHelper =
-                    collapsingToolbar.javaClass.getDeclaredField("mCollapsingTextHelper")
-                            .apply { isAccessible = true }
-                            .get(collapsingToolbar) ?: return null
+                collapsingToolbar.javaClass.getDeclaredField("mCollapsingTextHelper")
+                    .apply { isAccessible = true }
+                    .get(collapsingToolbar) ?: return null
             val textLayout =
-                    collapsingTextHelper.javaClass.getDeclaredField("mTextLayout")
-                            .apply { isAccessible = true }
-                            .get(collapsingTextHelper) as? StaticLayout
+                collapsingTextHelper.javaClass.getDeclaredField("mTextLayout")
+                    .apply { isAccessible = true }
+                    .get(collapsingTextHelper) as? StaticLayout
 
             return textLayout?.lineCount
         } catch (e: Exception) {
@@ -144,30 +156,37 @@ class QuotesActivity : NavigationActivity() {
 
     private fun initFab() {
         if (!withBook) {
-            add_fab.visibility = View.GONE
-            add_fab.isEnabled = false
+            view.addFab.visibility = View.GONE
+            view.addFab.isEnabled = false
         } else {
-            quotes_list.addOnScrollListener(HideFabOnScrollListener(add_fab))
+            view.quotesList.addOnScrollListener(HideFabOnScrollListener(view.addFab))
 
-            add_fab.onClick {
+            view.addFab.setOnClickListener {
                 Navigator.openAddQuoteActivity(this, bookId)
             }
         }
     }
 
     private fun initSwipeRefresh() {
-        swipe_refresh.setColorSchemeResources(R.color.accent)
-        swipe_refresh.setOnRefreshListener { update(force = true) }
+        view.swipeRefresh.setColorSchemeResources(R.color.colorAccent)
+        view.swipeRefresh.setOnRefreshListener { update(force = true) }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (withBook) {
             menuInflater.inflate(R.menu.book, menu)
 
-            twitterMenuItem = menu?.findItem(R.id.use_for_twitter)
-            MenuItemCompat.setIconTintList(twitterMenuItem,
-                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.icon)))
+            twitterMenuItem = menu.findItem(R.id.use_for_twitter).apply {
+                MenuItemCompat.setIconTintList(
+                    this,
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            this@QuotesActivity,
+                            R.color.icon
+                        )
+                    )
+                )
+            }
 
             updateTwitterIndicator()
             updateBookAuthorSpacing()
@@ -176,37 +195,45 @@ class QuotesActivity : NavigationActivity() {
     }
 
     private fun updateBookAuthorSpacing() {
-        collapsing_toolbar.post {
+        collapsingToolbar.post {
             getExpandedTitleLinesCount()?.let { linesCount ->
                 if (linesCount > 1) {
-                    book_author_text_view.setPadding(0,
-                            resources.getDimensionPixelSize(
-                                    R.dimen.expanded_book_author_extra_padding_top),
-                            0, 0)
+                    bookAuthorTextView.setPadding(
+                        0,
+                        resources.getDimensionPixelSize(
+                            R.dimen.expanded_book_author_extra_padding_top
+                        ),
+                        0, 0
+                    )
                 }
             }
-            AnimationUtil.fadeInView(book_author_text_view)
+            AnimationUtil.fadeInView(bookAuthorTextView)
         }
     }
 
     private fun initQuotesList() {
-        quotes_list.apply {
+        view.quotesList.apply {
             layoutManager = LinearLayoutManager(this@QuotesActivity)
             (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             adapter = quotesAdapter
         }
 
-        quotesAdapter.registerAdapterDataObserver(ScrollOnTopItemUpdateAdapterObserver(quotes_list))
+        quotesAdapter.registerAdapterDataObserver(ScrollOnTopItemUpdateAdapterObserver(view.quotesList))
 
-        error_empty_view.observeAdapter(quotesAdapter, R.string.quotes_empty)
-        error_empty_view.setEmptyViewDenial { quotesRepository.isNeverUpdated }
+        view.includeErrorEmptyView.errorEmptyView.observeAdapter(
+            quotesAdapter,
+            R.string.quotes_empty
+        )
+        view.includeErrorEmptyView.errorEmptyView.setEmptyViewDenial { quotesRepository.isNeverUpdated }
 
         quotesAdapter.apply {
             needBookTitles = !withBook
             setData(listOf())
             onItemClick { _, item ->
-                Navigator.openEditQuoteActivity(this@QuotesActivity, item.source.bookId,
-                        item.bookTitle, item.id, item.text, item.source.isPublic)
+                Navigator.openEditQuoteActivity(
+                    this@QuotesActivity, item.source.bookId,
+                    item.bookTitle, item.id, item.text, item.source.isPublic
+                )
             }
         }
 
@@ -219,42 +246,42 @@ class QuotesActivity : NavigationActivity() {
     private fun subscribeToQuotes() {
         quotesItemsDisposable?.dispose()
         quotesItemsDisposable = quotesRepository.itemsSubject
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe { displayQuotes() }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .subscribe { displayQuotes() }
 
         quotesLoadingDisposable?.dispose()
         quotesLoadingDisposable = quotesRepository.loadingSubject
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe { swipe_refresh.isRefreshing = it }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .subscribe { view.swipeRefresh.isRefreshing = it }
 
         quotesErrorsDisposable?.dispose()
         quotesErrorsDisposable = quotesRepository.errorsSubject
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe {
-                    if (quotesAdapter.hasData) {
-                        ErrorHandlerFactory.getByNetworkState().handle(it)
-                    } else {
-                        error_empty_view.showError(it) {
-                            update(true)
-                        }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .subscribe {
+                if (quotesAdapter.hasData) {
+                    ErrorHandlerFactory.getByNetworkState().handle(it)
+                } else {
+                    view.includeErrorEmptyView.errorEmptyView.showError(it) {
+                        update(true)
                     }
                 }
+            }
     }
     // endregion
 
     private fun updateTwitterIndicator() {
         twitterMenuItem?.icon =
-                if (isBookUsedForTwitter)
-                    ContextCompat.getDrawable(this, R.drawable.ic_twitter)
-                else
-                    ContextCompat.getDrawable(this, R.drawable.ic_twitter_outline)
+            if (isBookUsedForTwitter)
+                ContextCompat.getDrawable(this, R.drawable.ic_twitter)
+            else
+                ContextCompat.getDrawable(this, R.drawable.ic_twitter_outline)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.use_for_twitter -> tryEnableTwitterExport()
             R.id.delete -> tryToDeleteBook()
         }
@@ -292,40 +319,42 @@ class QuotesActivity : NavigationActivity() {
 
     private fun enableTwitterExport() {
         booksRepository.setTwitterBook(bookId)
-                .compose(ObservableTransformers.defaultSchedulersCompletable())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .doOnSubscribe {
-                    progress.show()
+            .compose(ObservableTransformers.defaultSchedulersCompletable())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .doOnSubscribe {
+                view.includeProgress.progress.show()
+            }
+            .doOnTerminate {
+                view.includeProgress.progress.hide()
+            }
+            .subscribeBy(
+                onComplete = {
+                    isBookUsedForTwitter = true
+                    ToastManager.long(R.string.twitter_export_enabled)
+                    setResult(Activity.RESULT_OK)
+                },
+                onError = {
+                    ErrorHandlerFactory.getDefault().handle(it)
                 }
-                .doOnTerminate {
-                    progress.hide()
-                }
-                .subscribeBy(
-                        onComplete = {
-                            isBookUsedForTwitter = true
-                            ToastManager.long(R.string.twitter_export_enabled)
-                            setResult(Activity.RESULT_OK)
-                        },
-                        onError = {
-                            ErrorHandlerFactory.getDefault().handle(it)
-                        }
-                )
+            )
     }
     // endregion
 
     // region Delete
     private fun tryToDeleteBook() {
         ConfirmationDialog(this)
-                .show(getString(R.string.delete_book_name_confirmation, bookTitle)) {
-                    deleteBook()
-                }
+            .show(getString(R.string.delete_book_name_confirmation, bookTitle)) {
+                deleteBook()
+            }
     }
 
     private var deleteProgressDialog: ProgressDialog? = null
     private fun displayDeleteBookProgress(cancelListener: DialogInterface.OnCancelListener? = null) {
         hideDeleteBookProgress()
-        deleteProgressDialog = ProgressDialog.show(this, null,
-                getString(R.string.book_deleting_progress), true, true)
+        deleteProgressDialog = ProgressDialog.show(
+            this, null,
+            getString(R.string.book_deleting_progress), true, true
+        )
         deleteProgressDialog?.setOnCancelListener(cancelListener)
     }
 
@@ -337,24 +366,24 @@ class QuotesActivity : NavigationActivity() {
     private fun deleteBook() {
         deleteBookDisposable?.dispose()
         deleteBookDisposable = booksRepository.delete(bookId)
-                .compose(ObservableTransformers.defaultSchedulersCompletable())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .doOnSubscribe {
-                    displayDeleteBookProgress(DialogInterface.OnCancelListener {
-                        deleteBookDisposable?.dispose()
-                    })
+            .compose(ObservableTransformers.defaultSchedulersCompletable())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .doOnSubscribe {
+                displayDeleteBookProgress(DialogInterface.OnCancelListener {
+                    deleteBookDisposable?.dispose()
+                })
+            }
+            .subscribeBy(
+                onComplete = {
+                    hideDeleteBookProgress()
+                    ToastManager.short(R.string.book_deleted)
+                    finish()
+                },
+                onError = {
+                    hideDeleteBookProgress()
+                    ErrorHandlerFactory.getDefault().handle(it)
                 }
-                .subscribeBy(
-                        onComplete = {
-                            hideDeleteBookProgress()
-                            ToastManager.short(R.string.book_deleted)
-                            finish()
-                        },
-                        onError = {
-                            hideDeleteBookProgress()
-                            ErrorHandlerFactory.getDefault().handle(it)
-                        }
-                )
+            )
     }
     // endregion
 }

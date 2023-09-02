@@ -29,17 +29,17 @@ object Repositories {
 
     fun user(): UserRepository {
         return App.state.userRepository
-                ?: UserRepository().also { App.state.userRepository = it }
+            ?: UserRepository().also { App.state.userRepository = it }
     }
 
     fun books(): BooksRepository {
         return App.state.booksRepository
-                ?: BooksRepository().also { App.state.booksRepository = it }
+            ?: BooksRepository().also { App.state.booksRepository = it }
     }
 
     fun quotes(): QuotesRepository {
         return App.state.quotesRepository
-                ?: QuotesRepository().also { App.state.quotesRepository = it }
+            ?: QuotesRepository().also { App.state.quotesRepository = it }
     }
 
     fun quotes(bookId: Long): QuotesByBookRepository {

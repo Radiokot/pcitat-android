@@ -6,13 +6,13 @@ object ErrorHandlerFactory {
     private var defaultErrorHandler: ErrorHandler? = null
     fun getDefault(): ErrorHandler {
         return defaultErrorHandler ?: DefaultErrorHandler()
-                .also { defaultErrorHandler = it }
+            .also { defaultErrorHandler = it }
     }
 
     private var offlineDefaultErrorHandler: ErrorHandler? = null
     fun getOfflineDefault(): ErrorHandler {
         return offlineDefaultErrorHandler ?: OfflineErrorHandler()
-                .also { offlineDefaultErrorHandler = it }
+            .also { offlineDefaultErrorHandler = it }
 
     }
 

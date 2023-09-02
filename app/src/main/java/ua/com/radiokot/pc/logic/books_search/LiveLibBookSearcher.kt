@@ -14,10 +14,11 @@ class LiveLibBookSearcher : BookSearcher {
     companion object {
         private val LIVELIB_ROOT_URL = "https://www.livelib.ru/"
     }
+
     override fun search(query: String): Observable<Collection<ExternalSiteBook>> {
         return ApiFactory.getLiveLibService()
-                .search(query)
-                .flatMap { parseLiveLibResponse(it) }
+            .search(query)
+            .flatMap { parseLiveLibResponse(it) }
     }
 
     private fun parseLiveLibResponse(result: LiveLibSearchResult):
@@ -26,7 +27,7 @@ class LiveLibBookSearcher : BookSearcher {
             val books = mutableSetOf<ExternalSiteBook>()
 
             val resultHtmlString = result.contentHtml
-                    ?: return@defer Observable.just(books)
+                ?: return@defer Observable.just(books)
             val resultHtml = Jsoup.parse(resultHtmlString)
 
             val rows = resultHtml.select(".object-edition")

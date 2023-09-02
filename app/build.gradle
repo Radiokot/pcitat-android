@@ -1,15 +1,16 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+}
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    compileSdkVersion 33
 
     lintOptions {
         disable 'RestrictedApi'
@@ -18,12 +19,12 @@ android {
     defaultConfig {
         applicationId "ua.com.radiokot.pc"
         minSdkVersion 17
-        targetSdkVersion 27
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
-        multiDexEnabled = true
+        vectorDrawables.useSupportLibrary true
+        multiDexEnabled true
 
         manifestPlaceholders = [fabricApiKey: keystoreProperties['FabricApiKey']]
     }
@@ -52,58 +53,51 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 ext {
-    supportLibVersion = "27.0.2"
     retrofitVersion = "2.2.0"
+    roomVersion = "2.5.1"
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.material:material:1.8.0'
 
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
-    compile "com.android.support:cardview-v7:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile "com.android.support:customtabs:${supportLibVersion}"
-    compile "com.android.support:preference-v14:${supportLibVersion}"
-    compile "com.android.support:transition:${supportLibVersion}"
-    compile 'com.android.support:multidex:1.0.3'
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
 
-    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
-    compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
+    implementation "com.mikepenz:materialdrawer:7.0.0"
 
-    compile('com.mikepenz:materialdrawer:5.9.0@aar') {
-        transitive = true
-    }
+    implementation 'com.google.android.gms:play-services-base:11.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'org.jsoup:jsoup:1.11.2'
 
-    compile 'com.google.android.gms:play-services-base:11.8.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-    compile 'com.rengwuxian.materialedittext:library:2.1.4'
-    compile 'org.jetbrains.anko:anko-sdk15:0.9.1'
-    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
-    compile 'org.jsoup:jsoup:1.11.2'
-    compile 'net.opacapp:multiline-collapsingtoolbar:1.6.0'
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-rxjava2:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
 
-    runtimeOnly 'androidx.room:room-runtime:2.3.0'
-    compile 'androidx.room:room-rxjava2:2.3.0'
-    kapt 'androidx.room:room-compiler:2.3.0'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.0.0'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.6"
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-kotlin:2.2.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
 
-    compile 'io.reactivex.rxjava2:rxkotlin:2.0.0'
-    compile "io.reactivex.rxjava2:rxjava:2.1.7"
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
-    compile 'com.trello.rxlifecycle2:rxlifecycle-kotlin:2.2.1'
-    compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+    testImplementation 'junit:junit:4.13.2'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

@@ -2,26 +2,23 @@ package ua.com.radiokot.pc.activities.books
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.transition.Fade
-import android.support.transition.TransitionManager
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.SimpleItemAnimator
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.android.synthetic.main.activity_books.*
-import kotlinx.android.synthetic.main.default_toolbar.*
-import kotlinx.android.synthetic.main.include_error_empty_view.*
-import org.jetbrains.anko.onClick
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.NavigationActivity
+import ua.com.radiokot.pc.databinding.ActivityBooksBinding
 import ua.com.radiokot.pc.logic.AuthManager
 import ua.com.radiokot.pc.logic.event_bus.events.BookAddedEvent
 import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
@@ -41,16 +38,18 @@ import kotlin.math.roundToInt
 
 class BooksActivity : NavigationActivity() {
     companion object {
-        private val minBookWidthDp = 140
-        val BOOK_COVER_PROPORTION = 1.42
+        private const val minBookWidthDp = 140
+        const val BOOK_COVER_PROPORTION = 1.42
     }
+
+    private lateinit var view: ActivityBooksBinding
 
     private val booksRepository: BooksRepository
         get() = Repositories.books()
     private val booksAdapter = BooksAdapter()
     private val loadingIndicator = LoadingIndicatorManager(
-            showLoading = { swipe_refresh.isRefreshing = true },
-            hideLoading = { swipe_refresh.isRefreshing = false }
+        showLoading = { view.swipeRefresh.isRefreshing = true },
+        hideLoading = { view.swipeRefresh.isRefreshing = false }
     )
     private val whitespaceSeriesRegex = " +".toRegex()
     private val searchQuerySubject = BehaviorSubject.createDefault("")
@@ -67,7 +66,9 @@ class BooksActivity : NavigationActivity() {
             return
         }
 
-        setContentView(R.layout.activity_books)
+        view = ActivityBooksBinding.inflate(layoutInflater)
+        setContentView(view.root)
+
         initToolbar(titleResId = R.string.my_books, needUpButton = false)
         initNavigation()
 
@@ -81,22 +82,24 @@ class BooksActivity : NavigationActivity() {
 
     // region Init
     private fun initSwipeRefresh() {
-        swipe_refresh.setColorSchemeResources(R.color.accent)
-        swipe_refresh.setOnRefreshListener { update(force = true) }
+        view.swipeRefresh.setColorSchemeResources(R.color.colorAccent)
+        view.swipeRefresh.setOnRefreshListener { update(force = true) }
     }
 
     private fun initBooksList() {
         initBooksRecyclerView()
 
         booksAdapter.onItemClick { _, book ->
-            Navigator.openQuotesActivity(this,
-                    book.id, book.title, book.authorName, book.isTwitterBook)
+            Navigator.openQuotesActivity(
+                this,
+                book.id, book.title, book.authorName, book.isTwitterBook
+            )
         }
 
-        error_empty_view.observeAdapter(booksAdapter) {
+        view.includeErrorEmptyView.errorEmptyView.observeAdapter(booksAdapter) {
             getString(if (isOnSearch) R.string.not_found else R.string.books_empty)
         }
-        error_empty_view.setEmptyViewDenial { booksRepository.isNeverUpdated }
+        view.includeErrorEmptyView.errorEmptyView.setEmptyViewDenial { booksRepository.isNeverUpdated }
 
         subscribeToBooks()
     }
@@ -119,14 +122,14 @@ class BooksActivity : NavigationActivity() {
 
         if (reset) {
             firstVisibleItem =
-                    (books_list.layoutManager as? LinearLayoutManager)
-                            ?.findFirstVisibleItemPosition() ?: 0
+                (view.booksList.layoutManager as? LinearLayoutManager)
+                    ?.findFirstVisibleItemPosition() ?: 0
 
-            books_list.adapter = null
-            books_list.layoutManager = null
+            view.booksList.adapter = null
+            view.booksList.layoutManager = null
         }
 
-        books_list.apply {
+        view.booksList.apply {
             setHasFixedSize(true)
             setItemViewCacheSize(20)
             isDrawingCacheEnabled = true
@@ -142,7 +145,7 @@ class BooksActivity : NavigationActivity() {
             }
         }
 
-        booksAdapter.registerAdapterDataObserver(ScrollOnTopItemUpdateAdapterObserver(books_list))
+        booksAdapter.registerAdapterDataObserver(ScrollOnTopItemUpdateAdapterObserver(view.booksList))
     }
 
     private var booksItemsDisposable: Disposable? = null
@@ -151,42 +154,42 @@ class BooksActivity : NavigationActivity() {
     private fun subscribeToBooks() {
         booksItemsDisposable?.dispose()
         booksItemsDisposable = booksRepository.itemsSubject
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe { displayBooks() }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .subscribe { displayBooks() }
 
         booksLoadingDisposable?.dispose()
         booksLoadingDisposable = booksRepository.loadingSubject
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe { loadingIndicator.setLoading(it, "books") }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .subscribe { loadingIndicator.setLoading(it, "books") }
 
         booksErrorsDisposable?.dispose()
         booksErrorsDisposable = booksRepository.errorsSubject
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .subscribe {
-                    if (booksAdapter.hasData) {
-                        ErrorHandlerFactory.getByNetworkState().handle(it)
-                    } else {
-                        error_empty_view.showError(it) {
-                            update(true)
-                        }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .subscribe {
+                if (booksAdapter.hasData) {
+                    ErrorHandlerFactory.getByNetworkState().handle(it)
+                } else {
+                    view.includeErrorEmptyView.errorEmptyView.showError(it) {
+                        update(true)
                     }
                 }
+            }
     }
 
     private fun initSearch() {
         searchQuerySubject
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .debounce(100, TimeUnit.MILLISECONDS)
-                .compose(ObservableTransformers.defaultSchedulers())
-                .subscribe { displayBooks() }
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .debounce(100, TimeUnit.MILLISECONDS)
+            .compose(ObservableTransformers.defaultSchedulers())
+            .subscribe { displayBooks() }
     }
 
     private fun initFab() {
-        books_list.addOnScrollListener(HideFabOnScrollListener(add_fab))
-        add_fab.onClick {
+        view.booksList.addOnScrollListener(HideFabOnScrollListener(view.addFab))
+        view.addFab.setOnClickListener {
             Navigator.openAddBookActivity(this)
         }
     }
@@ -220,18 +223,18 @@ class BooksActivity : NavigationActivity() {
         })
 
         searchItem?.setOnMenuItemClickListener {
-            TransitionManager.beginDelayedTransition(toolbar, Fade())
+            TransitionManager.beginDelayedTransition(findViewById(R.id.toolbar), Fade())
             searchItem.expandActionView()
             hideFabForSearch()
             true
         }
 
         searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 return true
             }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 showFabAfterSearch()
                 return true
             }
@@ -241,7 +244,7 @@ class BooksActivity : NavigationActivity() {
     }
     // endregion
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         initBooksRecyclerView(reset = true)
     }
@@ -252,33 +255,35 @@ class BooksActivity : NavigationActivity() {
 
         val searchQuery = searchQuerySubject.value ?: ""
         val searchPredicate: (Book) -> Boolean =
-                if (isOnSearch)
-                    { book ->
-                        SearchUtil.isMatchGeneralCondition(searchQuery,
-                                listOf(book.title, book.authorName))
-                    }
-                else
-                    { _ -> true }
+            if (isOnSearch)
+                { book ->
+                    SearchUtil.isMatchGeneralCondition(
+                        searchQuery,
+                        listOf(book.title, book.authorName)
+                    )
+                }
+            else
+                { _ -> true }
 
         booksAdapter.setData(
-                books
-                        .filter(searchPredicate)
-                        .map { BookListItem(it) }
+            books
+                .filter(searchPredicate)
+                .map { BookListItem(it) }
         )
     }
 
     private var fabWasVisible = false
     private fun showFabAfterSearch() {
-        add_fab.isEnabled = true
+        view.addFab.isEnabled = true
         if (fabWasVisible) {
-            add_fab.show()
+            view.addFab.show()
         }
     }
 
     private fun hideFabForSearch() {
-        fabWasVisible = add_fab.visibility == View.VISIBLE
-        add_fab.isEnabled = false
-        add_fab.hide()
+        fabWasVisible = view.addFab.visibility == View.VISIBLE
+        view.addFab.isEnabled = false
+        view.addFab.hide()
     }
 
     private fun update(force: Boolean = false) {
@@ -292,7 +297,7 @@ class BooksActivity : NavigationActivity() {
     override fun onPcEvent(event: PcEvent) {
         when (event) {
             is BookAddedEvent ->
-                books_list.smoothScrollToPosition(0)
+                view.booksList.smoothScrollToPosition(0)
         }
     }
 }

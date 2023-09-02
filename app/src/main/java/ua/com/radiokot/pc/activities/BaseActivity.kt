@@ -2,11 +2,10 @@ package ua.com.radiokot.pc.activities
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
-import kotlinx.android.synthetic.main.default_toolbar.*
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.logic.event_bus.PcEvents
 import ua.com.radiokot.pc.logic.event_bus.events.PcEvent
@@ -49,17 +48,17 @@ abstract class BaseActivity : RxAppCompatActivity() {
     }
 
     protected fun initToolbar(titleResId: Int = 0, needUpButton: Boolean = true) =
-            initToolbar(if (titleResId != 0) getString(titleResId) else null, needUpButton)
+        initToolbar(if (titleResId != 0) getString(titleResId) else null, needUpButton)
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
 
     protected open fun getToolbar(): Toolbar? {
-        return toolbar
+        return findViewById(R.id.toolbar)
     }
 
     private fun getToolbarTitleTextView(): TextView? {

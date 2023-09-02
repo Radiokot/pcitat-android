@@ -9,10 +9,14 @@ import ua.com.radiokot.pc.logic.model.LiveLibSearchResult
 
 interface LiveLibService {
     @FormUrlEncoded
-    @Headers("Accept: text/javascript, text/html, application/xml, text/xml, */*",
-            "X-Requested-With: XMLHttpRequest")
+    @Headers(
+        "Accept: text/javascript, text/html, application/xml, text/xml, */*",
+        "X-Requested-With: XMLHttpRequest"
+    )
     @POST("https://www.livelib.ru/main/search")
-    fun search(@Field("text") query: String,
-               @Field("object_alias") objectAlias: String = "booksauthors"):
+    fun search(
+        @Field("text") query: String,
+        @Field("object_alias") objectAlias: String = "booksauthors"
+    ):
             Observable<LiveLibSearchResult>
 }

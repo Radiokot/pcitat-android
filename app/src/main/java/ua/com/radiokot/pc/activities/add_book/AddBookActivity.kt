@@ -5,20 +5,18 @@ import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
-import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.android.synthetic.main.activity_add_book.*
-import kotlinx.android.synthetic.main.include_error_empty_view.*
-import kotlinx.android.synthetic.main.layout_progress.*
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.BaseActivity
+import ua.com.radiokot.pc.databinding.ActivityAddBookBinding
 import ua.com.radiokot.pc.logic.books_search.LiveLibBookSearcher
 import ua.com.radiokot.pc.logic.exceptions.ConflictException
 import ua.com.radiokot.pc.logic.model.ExternalSiteBook
@@ -34,6 +32,8 @@ class AddBookActivity : BaseActivity() {
         val ADD_BOOK_REQUEST = "add_book".hashCode() and 0xffff
     }
 
+    private lateinit var view: ActivityAddBookBinding
+
     private val searchQuerySubject = BehaviorSubject.createDefault("")
     private val booksAdapter = SuggestedBooksAdapter()
     private val bookSearcher = LiveLibBookSearcher()
@@ -43,7 +43,10 @@ class AddBookActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_book)
+
+        view = ActivityAddBookBinding.inflate(layoutInflater)
+        setContentView(view.root)
+
         initToolbar(R.string.add_book_title)
 
         initSearch()
@@ -52,13 +55,13 @@ class AddBookActivity : BaseActivity() {
 
     // region Init
     private fun initSearch() {
-        add_book_search_view.onActionViewExpanded()
+        view.addBookSearchView.onActionViewExpanded()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            add_book_search_view.importantForAutofill =
-                    View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
+            view.addBookSearchView.importantForAutofill =
+                View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
         }
 
-        add_book_search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        view.addBookSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 return true
             }
@@ -79,20 +82,20 @@ class AddBookActivity : BaseActivity() {
 
     private fun subscribeToSearchQuery() {
         searchQuerySubject
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .debounce(1, TimeUnit.SECONDS)
-                .compose(ObservableTransformers.defaultSchedulers())
-                .subscribe { searchBooks(it) }
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .debounce(1, TimeUnit.SECONDS)
+            .compose(ObservableTransformers.defaultSchedulers())
+            .subscribe { searchBooks(it) }
     }
 
     private fun initBooksList() {
-        suggested_books_list.apply {
+        view.suggestedBooksList.apply {
             layoutManager = LinearLayoutManager(this@AddBookActivity)
             (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             adapter = booksAdapter
         }
 
-        error_empty_view.observeAdapter(booksAdapter, R.string.not_found)
+        view.includeErrorEmptyView.errorEmptyView.observeAdapter(booksAdapter, R.string.not_found)
 
         booksAdapter.onItemClick { _, item ->
             addBook(item)
@@ -109,27 +112,27 @@ class AddBookActivity : BaseActivity() {
             displayFoundBooks(listOf())
         } else {
             searchDisposable = bookSearcher.search(query)
-                    .compose(ObservableTransformers.defaultSchedulers())
-                    .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                    .doOnSubscribe {
-                        progress.show()
-                    }
-                    .subscribeBy(
-                            onNext = {
-                                progress.hide()
-                                displayFoundBooks(it)
-                            },
-                            onError = {
-                                progress.hide()
-                                if (booksAdapter.hasData) {
-                                    ErrorHandlerFactory.getDefault().handle(it)
-                                } else {
-                                    error_empty_view.showError(it) {
-                                        searchBooks(query)
-                                    }
-                                }
+                .compose(ObservableTransformers.defaultSchedulers())
+                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+                .doOnSubscribe {
+                    view.includeProgress.progress.show()
+                }
+                .subscribeBy(
+                    onNext = {
+                        view.includeProgress.progress.hide()
+                        displayFoundBooks(it)
+                    },
+                    onError = {
+                        view.includeProgress.progress.hide()
+                        if (booksAdapter.hasData) {
+                            ErrorHandlerFactory.getDefault().handle(it)
+                        } else {
+                            view.includeErrorEmptyView.errorEmptyView.showError(it) {
+                                searchBooks(query)
                             }
-                    )
+                        }
+                    }
+                )
         }
     }
 
@@ -140,8 +143,10 @@ class AddBookActivity : BaseActivity() {
     var addingProgressDialog: ProgressDialog? = null
     private fun displayAddingProgress(cancelListener: DialogInterface.OnCancelListener? = null) {
         hideAddingProgress()
-        addingProgressDialog = ProgressDialog.show(this, null,
-                getString(R.string.book_adding_progress), true, true)
+        addingProgressDialog = ProgressDialog.show(
+            this, null,
+            getString(R.string.book_adding_progress), true, true
+        )
         addingProgressDialog?.setOnCancelListener(cancelListener)
     }
 
@@ -153,29 +158,34 @@ class AddBookActivity : BaseActivity() {
     private fun addBook(book: ExternalSiteBook) {
         addBookDisposable?.dispose()
         addBookDisposable = booksRepository.addExternalBook(book)
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .doOnSubscribe {
-                    displayAddingProgress(DialogInterface.OnCancelListener {
-                        addBookDisposable?.dispose()
-                    })
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .doOnSubscribe {
+                displayAddingProgress(DialogInterface.OnCancelListener {
+                    addBookDisposable?.dispose()
+                })
+            }
+            .subscribeBy(
+                onNext = {
+                    hideAddingProgress()
+                    ToastManager.short(R.string.book_added)
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                },
+                onError = {
+                    hideAddingProgress()
+                    when (it) {
+                        is ConflictException ->
+                            ToastManager.long(
+                                getString(
+                                    R.string.error_book_name_already_added,
+                                    book.title
+                                )
+                            )
+
+                        else -> ErrorHandlerFactory.getDefault().handle(it)
+                    }
                 }
-                .subscribeBy(
-                        onNext = {
-                            hideAddingProgress()
-                            ToastManager.short(R.string.book_added)
-                            setResult(Activity.RESULT_OK)
-                            finish()
-                        },
-                        onError = {
-                            hideAddingProgress()
-                            when (it) {
-                                is ConflictException ->
-                                    ToastManager.long(getString(R.string.error_book_name_already_added,
-                                            book.title))
-                                else -> ErrorHandlerFactory.getDefault().handle(it)
-                            }
-                        }
-                )
+            )
     }
 }

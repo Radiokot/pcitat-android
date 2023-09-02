@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/QuoteCard"
     android:layout_width="match_parent"
@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/half_standard_margin"
         android:paddingStart="@dimen/half_standard_margin"
-        android:paddingTop="@dimen/half_standard_margin">
+        android:paddingTop="@dimen/half_standard_margin"
+        android:paddingBottom="@dimen/half_standard_margin">
 
         <View
             android:layout_width="@dimen/quarter_standard_margin"
@@ -24,8 +24,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/half_standard_margin"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/quarter_standard_margin"
-            android:paddingTop="@dimen/quarter_standard_margin">
+            android:paddingTop="@dimen/quarter_standard_margin"
+            android:paddingBottom="@dimen/quarter_standard_margin">
 
             <TextView
                 android:id="@+id/quote_text_view"
@@ -50,4 +50,4 @@
                 tools:visibility="visible" />
         </LinearLayout>
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

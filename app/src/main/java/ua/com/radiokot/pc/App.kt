@@ -2,12 +2,12 @@ package ua.com.radiokot.pc
 
 import android.app.Activity
 import android.os.Bundle
-import android.support.multidex.MultiDexApplication
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.security.ProviderInstaller
-import com.jakewharton.picasso.OkHttp3Downloader
+import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import ua.com.radiokot.pc.logic.AppState
 import ua.com.radiokot.pc.logic.AuthManager
@@ -21,7 +21,7 @@ import java.io.File
  */
 class App : MultiDexApplication() {
     companion object {
-        private val IMAGE_CACHE_DIR_NAME = "images"
+        private const val IMAGE_CACHE_DIR_NAME = "images"
 
         private lateinit var mInstance: App
 
@@ -85,7 +85,7 @@ class App : MultiDexApplication() {
 
             override fun onActivityStopped(a: Activity) {}
 
-            override fun onActivitySaveInstanceState(a: Activity, b: Bundle?) {}
+            override fun onActivitySaveInstanceState(a: Activity, b: Bundle) {}
 
             override fun onActivityDestroyed(a: Activity) {}
         })
@@ -93,23 +93,23 @@ class App : MultiDexApplication() {
 
     private fun subscribeToAuthStatus() {
         AuthManager.authorizedObservable
-                .compose(ObservableTransformers.defaultSchedulers())
-                .subscribe { isAuthorized ->
-                    if (!isAuthorized) {
-                        currentActivity?.let {
-                            it.finishAffinity()
-                            Navigator.toLoginActivity(it)
-                        }
+            .compose(ObservableTransformers.defaultSchedulers())
+            .subscribe { isAuthorized ->
+                if (!isAuthorized) {
+                    currentActivity?.let {
+                        it.finishAffinity()
+                        Navigator.toLoginActivity(it)
                     }
-
-                    AppShortcutsManager.initShortcuts()
                 }
+
+                AppShortcutsManager.initShortcuts()
+            }
     }
 
     private fun initPicasso() {
         val picasso = Picasso.Builder(this)
-                .downloader(OkHttp3Downloader(getImageCacheDir()))
-                .build()
+            .downloader(OkHttp3Downloader(getImageCacheDir()))
+            .build()
         Picasso.setSingletonInstance(picasso)
     }
     // endregion
@@ -118,7 +118,7 @@ class App : MultiDexApplication() {
         return File(externalCacheDir ?: cacheDir, IMAGE_CACHE_DIR_NAME)
     }
 
-    fun clearImageCahce() {
+    fun clearImageCache() {
         getImageCacheDir().deleteRecursively()
     }
 }

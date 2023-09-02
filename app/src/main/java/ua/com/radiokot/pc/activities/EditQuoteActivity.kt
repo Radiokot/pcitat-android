@@ -12,9 +12,8 @@ import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.activity_edit_quote.*
-import org.jetbrains.anko.share
 import ua.com.radiokot.pc.R
+import ua.com.radiokot.pc.databinding.ActivityEditQuoteBinding
 import ua.com.radiokot.pc.logic.repository.QuotesByBookRepository
 import ua.com.radiokot.pc.logic.repository.Repositories
 import ua.com.radiokot.pc.util.ObservableTransformers
@@ -35,6 +34,8 @@ class EditQuoteActivity : BaseActivity() {
 
         val EDIT_QUOTE_REQUEST = "edit_quote".hashCode() and 0xffff
     }
+
+    private lateinit var view: ActivityEditQuoteBinding
 
     private val isAdding: Boolean
         get() = intent.getBooleanExtra(IS_ADDING_EXTRA, true)
@@ -63,7 +64,8 @@ class EditQuoteActivity : BaseActivity() {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         }
 
-        setContentView(R.layout.activity_edit_quote)
+        view = ActivityEditQuoteBinding.inflate(layoutInflater)
+        setContentView(view.root)
 
         initToolbar(if (isAdding) R.string.add_quote_title else 0)
 
@@ -72,18 +74,18 @@ class EditQuoteActivity : BaseActivity() {
 
     // region Init
     private fun initInput() {
-        quote_edit_text.apply {
+        view.quoteEditText.apply {
             typeface = TypefaceUtil.getRobotoSlabRegular()
             background = null
 
             setText(quoteText)
             if (quoteText.isNotEmpty()) {
                 //setSelection(quoteText.length, quoteText.length)
-                focus_grabber.requestFocus()
+                view.focusGrabber.requestFocus()
             }
         }
 
-        quote_is_public_checkbox.apply {
+        view.quoteIsPublicCheckbox.apply {
             typeface = TypefaceUtil.getRobotoSlabRegular()
 
             isChecked = quoteIsPublic
@@ -105,8 +107,8 @@ class EditQuoteActivity : BaseActivity() {
     }
     // endregion
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.delete -> tryToDelete()
             R.id.save -> tryToSave()
             R.id.share -> share()
@@ -117,23 +119,27 @@ class EditQuoteActivity : BaseActivity() {
 
     private fun tryToDelete() {
         ConfirmationDialog(this)
-                .show(getString(R.string.delete_quote_confirmation)) {
-                    delete()
-                }
+            .show(getString(R.string.delete_quote_confirmation)) {
+                delete()
+            }
     }
 
     // region Progress
     var progressDialog: ProgressDialog? = null
 
-    private fun displayProgress(message: String,
-                                cancelListener: DialogInterface.OnCancelListener? = null) {
+    private fun displayProgress(
+        message: String,
+        cancelListener: DialogInterface.OnCancelListener? = null
+    ) {
         if (progressDialog?.isShowing == true) {
             progressDialog?.setMessage(message)
             progressDialog?.setCancelable(cancelListener != null)
         }
-        progressDialog = ProgressDialog.show(this, null,
-                message, true,
-                cancelListener != null)
+        progressDialog = ProgressDialog.show(
+            this, null,
+            message, true,
+            cancelListener != null
+        )
         progressDialog?.setOnCancelListener(cancelListener)
     }
 
@@ -146,29 +152,29 @@ class EditQuoteActivity : BaseActivity() {
     private fun delete() {
         deleteDisposable?.dispose()
         deleteDisposable = quotesRepository.delete(quoteId)
-                .compose(ObservableTransformers.defaultSchedulersCompletable())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .doOnSubscribe {
-                    displayProgress(getString(R.string.quote_deleting_progress),
-                            DialogInterface.OnCancelListener {
-                                saveDisposable?.dispose()
-                            })
+            .compose(ObservableTransformers.defaultSchedulersCompletable())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .doOnSubscribe {
+                displayProgress(getString(R.string.quote_deleting_progress),
+                    DialogInterface.OnCancelListener {
+                        saveDisposable?.dispose()
+                    })
+            }
+            .subscribeBy(
+                onComplete = {
+                    hideProgress()
+                    ToastManager.short(R.string.quote_deleted)
+                    finishWithResult()
+                },
+                onError = {
+                    hideProgress()
+                    ErrorHandlerFactory.getDefault().handle(it)
                 }
-                .subscribeBy(
-                        onComplete = {
-                            hideProgress()
-                            ToastManager.short(R.string.quote_deleted)
-                            finishWithResult()
-                        },
-                        onError = {
-                            hideProgress()
-                            ErrorHandlerFactory.getDefault().handle(it)
-                        }
-                )
+            )
     }
 
     private fun tryToSave() {
-        if (quote_edit_text.text.isBlank()) {
+        if (view.quoteEditText.text.isBlank()) {
             ToastManager.short(R.string.input_text_hint)
             return
         }
@@ -180,35 +186,35 @@ class EditQuoteActivity : BaseActivity() {
     private fun save() {
         saveDisposable?.dispose()
 
-        val text = quote_edit_text.text.trim().toString()
-        val isPublic = quote_is_public_checkbox.isChecked
+        val text = view.quoteEditText.text.trim().toString()
+        val isPublic = view.quoteIsPublicCheckbox.isChecked
 
         val saveObservable =
-                if (isAdding)
-                    quotesRepository.add(text, isPublic)
-                else
-                    quotesRepository.update(quoteId, text, isPublic)
+            if (isAdding)
+                quotesRepository.add(text, isPublic)
+            else
+                quotesRepository.update(quoteId, text, isPublic)
 
         saveDisposable = saveObservable
-                .compose(ObservableTransformers.defaultSchedulers())
-                .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
-                .doOnSubscribe {
-                    displayProgress(getString(R.string.quote_saving_progress),
-                            DialogInterface.OnCancelListener {
-                                saveDisposable?.dispose()
-                            })
+            .compose(ObservableTransformers.defaultSchedulers())
+            .bindUntilEvent(lifecycle(), ActivityEvent.DESTROY)
+            .doOnSubscribe {
+                displayProgress(getString(R.string.quote_saving_progress),
+                    DialogInterface.OnCancelListener {
+                        saveDisposable?.dispose()
+                    })
+            }
+            .subscribeBy(
+                onNext = {
+                    hideProgress()
+                    ToastManager.short(R.string.quote_saved)
+                    finishWithResult()
+                },
+                onError = {
+                    hideProgress()
+                    ErrorHandlerFactory.getDefault().handle(it)
                 }
-                .subscribeBy(
-                        onNext = {
-                            hideProgress()
-                            ToastManager.short(R.string.quote_saved)
-                            finishWithResult()
-                        },
-                        onError = {
-                            hideProgress()
-                            ErrorHandlerFactory.getDefault().handle(it)
-                        }
-                )
+            )
     }
 
     private fun finishWithResult() {
@@ -222,7 +228,13 @@ class EditQuoteActivity : BaseActivity() {
             text += "\n" + getString(R.string.quote_book_title, bookTitle)
         }
 
-        share(text, getString(R.string.app_name))
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }
+
+        startActivity(Intent.createChooser(sendIntent, null))
     }
 
     private fun tryToOpenLens() {

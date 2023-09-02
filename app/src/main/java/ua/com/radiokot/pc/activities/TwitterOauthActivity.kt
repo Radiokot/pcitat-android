@@ -6,13 +6,11 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import kotlinx.android.synthetic.main.activity_twitter_oauth.*
-import kotlinx.android.synthetic.main.layout_progress.*
-import ua.com.radiokot.pc.R
+import androidx.appcompat.widget.Toolbar
+import ua.com.radiokot.pc.databinding.ActivityTwitterOauthBinding
 import ua.com.radiokot.pc.logic.api.ApiFactory
 import ua.com.radiokot.pc.logic.model.User
 import ua.com.radiokot.pc.logic.repository.Repositories
@@ -37,6 +35,8 @@ class TwitterOauthActivity : BaseActivity() {
         private const val OAUTH_KEY_KEY = "key"
     }
 
+    private lateinit var view: ActivityTwitterOauthBinding
+
     private val user: User?
         get() {
             val repository = Repositories.user()
@@ -49,14 +49,17 @@ class TwitterOauthActivity : BaseActivity() {
     private val mode: Mode
         get() = Mode.valueOf(intent.getStringExtra(MODE_EXTRA, Mode.LOGIN.toString()))
     private val modeUrl: String
-        get() = "${ApiFactory.TWITTER_OAUTH_URL
+        get() = "${
+            ApiFactory.TWITTER_OAUTH_URL
         }?action=${mode.toString().toLowerCase()}&redirect=${ApiFactory.OAUTH_RESULT_URI}" +
                 "&request_key=${user?.authKey?.sha256()}" +
                 "&email=${user?.email}"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_twitter_oauth)
+
+        view = ActivityTwitterOauthBinding.inflate(layoutInflater)
+        setContentView(view.root)
 
         initWebView()
     }
@@ -71,19 +74,19 @@ class TwitterOauthActivity : BaseActivity() {
                 view?.visibility = View.INVISIBLE
                 processOauthResult(Uri.parse(url))
             } else {
-                progress.show()
+                this@TwitterOauthActivity.view.includeProgress.progress.show()
             }
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
-            progress.hide()
+            this@TwitterOauthActivity.view.includeProgress.progress.hide()
         }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun initWebView() {
-        oauth_web_view.apply {
+        view.oauthWebView.apply {
             scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
             webViewClient = oauthWebClient
             settings.domStorageEnabled = true
@@ -114,9 +117,11 @@ class TwitterOauthActivity : BaseActivity() {
     }
 
     private fun finishWithCredentials(email: String, key: String) {
-        setResult(Activity.RESULT_OK,
-                Intent().putExtra(EMAIL_RESULT_EXTRA, email)
-                        .putExtra(KEY_RESULT_EXTRA, key))
+        setResult(
+            Activity.RESULT_OK,
+            Intent().putExtra(EMAIL_RESULT_EXTRA, email)
+                .putExtra(KEY_RESULT_EXTRA, key)
+        )
         finish()
     }
 
