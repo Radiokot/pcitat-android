@@ -5,7 +5,6 @@ import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.text.StaticLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.internal.CollapsingTextHelper
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
@@ -134,21 +134,15 @@ class QuotesActivity : NavigationActivity() {
         bookAuthorTextView.typeface = TypefaceUtil.getRobotoSlabRegular()
     }
 
-    // TODO: This is no more working.
     private fun getExpandedTitleLinesCount(): Int? {
-        // I really don't want to rebuild the library, so
-        // let's do some reflection.
         try {
-            val collapsingTextHelper =
-                collapsingToolbar.javaClass.getDeclaredField("mCollapsingTextHelper")
+            val collapsingTextHelper: CollapsingTextHelper =
+                collapsingToolbar.javaClass.getDeclaredField("collapsingTextHelper")
                     .apply { isAccessible = true }
-                    .get(collapsingToolbar) ?: return null
-            val textLayout =
-                collapsingTextHelper.javaClass.getDeclaredField("mTextLayout")
-                    .apply { isAccessible = true }
-                    .get(collapsingTextHelper) as? StaticLayout
+                    .get(collapsingToolbar) as? CollapsingTextHelper
+                    ?: return null
 
-            return textLayout?.lineCount
+            return collapsingTextHelper.expandedLineCount
         } catch (e: Exception) {
             return null
         }
