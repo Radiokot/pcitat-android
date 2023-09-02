@@ -29,6 +29,6 @@ class User(
      */
     val avatarUrl: String?
         get() = twitterIntegration?.username?.let {
-            "https://unavatar.now.sh/twitter/$it"
+            "https://unavatar.io/twitter/$it?fallback=false"
         }
 }
