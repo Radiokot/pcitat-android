@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.trello.rxlifecycle2.android.ActivityEvent
@@ -14,6 +15,7 @@ import com.trello.rxlifecycle2.kotlin.bindUntilEvent
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
+import okhttp3.HttpUrl
 import ua.com.radiokot.pc.R
 import ua.com.radiokot.pc.activities.BaseActivity
 import ua.com.radiokot.pc.databinding.ActivityAddBookBinding
@@ -51,6 +53,7 @@ class AddBookActivity : BaseActivity() {
 
         initSearch()
         initBooksList()
+        initButtons()
     }
 
     // region Init
@@ -69,9 +72,13 @@ class AddBookActivity : BaseActivity() {
             override fun onQueryTextChange(query: String?): Boolean {
                 if (query != null) {
                     val newQuery = query.trim()
-                    if (newQuery != searchQuerySubject.value) {
+                    val parsedUrl = HttpUrl.parse(newQuery)
+                    if (parsedUrl != null) {
+                        searchQuerySubject.onNext("")
+                    } else if (newQuery != searchQuerySubject.value) {
                         searchQuerySubject.onNext(newQuery)
                     }
+                    view.addByLinkButton.isVisible = parsedUrl != null
                 }
                 return true
             }
@@ -101,6 +108,15 @@ class AddBookActivity : BaseActivity() {
             addBook(item)
         }
         booksAdapter.setData(listOf())
+    }
+
+    private fun initButtons() {
+        view.addByLinkButton.setOnClickListener {
+            val queryString = view.addBookSearchView.query.trim().toString()
+            if (HttpUrl.parse(queryString) != null) {
+                addBook(ExternalSiteBook(externalUrl = queryString))
+            }
+        }
     }
     // endregion
 
@@ -177,10 +193,13 @@ class AddBookActivity : BaseActivity() {
                     when (it) {
                         is ConflictException ->
                             ToastManager.long(
-                                getString(
-                                    R.string.error_book_name_already_added,
-                                    book.title
-                                )
+                                if (book.title != null)
+                                    getString(
+                                        R.string.error_book_name_already_added,
+                                        book.title
+                                    )
+                                else
+                                    getString(R.string.error_book_already_added)
                             )
 
                         else -> ErrorHandlerFactory.getDefault().handle(it)

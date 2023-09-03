@@ -50,6 +50,22 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/add_by_link_button"
+        style="@style/PrimaryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:paddingStart="@dimen/double_standard_margin"
+        android:paddingEnd="@dimen/double_standard_margin"
+        android:text="@string/add_book_by_link"
+        android:theme="@style/PrimaryButton.Overlay"
+        android:visibility="gone"
+        app:layout_anchor="@id/suggested_books_list"
+        app:layout_anchorGravity="bottom|center_horizontal"
+        tools:visibility="visible" />
+
     <include layout="@layout/include_appbar_elevation" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

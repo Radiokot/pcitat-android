@@ -18,8 +18,9 @@
     <string name="search">Поиск</string>
     <string name="book_used_for_twitter">Используется для экспорта из Twitter</string>
     <string name="add_book_title">Добавить книгу</string>
-    <string name="book_search_hint">Название книги или имя автора</string>
+    <string name="book_search_hint">Название, автор, ссылка на LiveLib</string>
     <string name="error_book_name_already_added">Книга «%1$s» уже в вашей коллекции</string>
+    <string name="error_book_already_added">Книга уже в вашей коллекции</string>
     <string name="book_added">Книга добавлена</string>
     <string name="book_adding_progress">Добавление книги…</string>
     <string name="my_quotes">Мои цитаты</string>
@@ -56,4 +57,5 @@
     <string name="change_twitter_account_action">Изменить</string>
     <string name="scan_with_lens_action">Считать через Объектив</string>
     <string name="public_quote">Публичная цитата</string>
+    <string name="add_book_by_link">Добавить по ссылке</string>
 </resources>
